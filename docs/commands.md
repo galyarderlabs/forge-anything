@@ -192,14 +192,6 @@ Plan it, build it, check it against evidence, ship it. This is the inner loop, a
 - **Most valuable:** attack simulation against the real features, not a checklist scan.
 - **Expected output:** an offensive audit and attack simulation results.
 
-### [/experiment](../commands/experiment.md)
-
-- **When:** validation matters more than stability.
-- **Agent:** none named in the file. The file states the trade: technical debt for velocity, only when validation is required over stability.
-- **Example:** `/experiment test whether users want X`
-- **Most valuable:** fast validation with the tradeoff stated upfront.
-- **Expected output:** an experiment that validates or kills the idea, not stable code.
-
 ## Earn
 
 The shipped work is priced, sold, and collected.
