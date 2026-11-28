@@ -140,17 +140,15 @@ pub fn scaffold(
             &mut s,
         )?;
     }
-    // Design specs -> docs/design/.
-    let design_src = source.join("docs/design");
-    let design_dst = target.join("docs/design");
-    if design_src.is_dir() {
-        for entry in read_dir_sorted(&design_src)? {
-            let name = entry.file_name().to_string_lossy().into_owned();
-            if name.starts_with(curated::DESIGN_SPEC_PREFIX) && name.ends_with(".md") {
-                copy_file(entry.path(), design_dst.join(&name), &mut s)?;
-                s.design_specs += 1;
-            }
-        }
+    // The design guide is the scaffold seed: root DESIGN.md -> docs/design/.
+    let design_guide = source.join("DESIGN.md");
+    if design_guide.is_file() {
+        copy_file(
+            design_guide,
+            target.join("docs/design").join("DESIGN.md"),
+            &mut s,
+        )?;
+        s.design_specs += 1;
     }
     // Departments: README + audit template each.
     for dept in curated::DEPARTMENTS {

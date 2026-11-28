@@ -142,6 +142,3 @@ pub fn audit_template_for(department: &str) -> Option<&'static str> {
 
 /// Report template seeded into `docs/reports/`.
 pub const DECISION_LOG_TEMPLATE: &str = "Forge-Anything Decision Log Template.md";
-
-/// Design specs are seeded by filename prefix, from `<source>/docs/design/`.
-pub const DESIGN_SPEC_PREFIX: &str = "design-md-";
