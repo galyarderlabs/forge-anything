@@ -49,7 +49,7 @@ The departments are how the work is organized, so agents know where work belongs
 16. **External Relations**: PR, media production, crisis communications, fundraising, external partnerships.
 17. **Life**: health, mind, relationships, learning, money, home.
 
-The coordinators are `forge-ceo`, `forge-cfo-coo`, `forge-cmo`, `forge-cto`, and `forge-specialist`, which handles work that does not fit one department.
+The coordinators are `forge-ceo`, `forge-cfo`, `forge-coo`, `forge-cmo`, `forge-cto`, and `forge-specialist`, which handles work that does not fit one department.
 
 ## How work is reported
 Useful work leaves a readable artifact: a report, a release note, a decision, a PR, an issue, a doc, or a reusable skill. Department reports go to the founder in a short, factual form: current state, what changed, risks, and decisions needed. See the report templates in `docs/templates/Forge-Department-Reports/` and `docs/templates/Forge-Anything Founder Report Templates.md`.

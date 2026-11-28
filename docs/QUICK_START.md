@@ -27,6 +27,10 @@ curl -fsSL https://raw.githubusercontent.com/galyarderlabs/forge-anything/main/i
 The script downloads the binary for your platform from the latest GitHub
 Release, verifies its SHA256 checksum, and installs it to `~/.local/bin`.
 
+No release ships a prebuilt binary yet (the first binary release needs a
+version tag push), so this path is unproven today; building from source
+below is the working path.
+
 Or install the binary with cargo, from a checkout (requires Rust 1.85+):
 
 ```bash

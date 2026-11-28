@@ -1,9 +1,11 @@
 # Forge Anything Agent-to-Skill Mapping
 
 ## Purpose
-This document maps each major agent to the skills it uses.
+This document maps each agent to the skills it uses.
 
 An agent is the one doing the work; a skill is a rule the agent follows while doing it. The mapping shows which skills belong with which agent, so an agent loads the rules that fit its work and nothing else.
+
+Generated from the live agent rosters (`agents/<name>/README.md`) on 28 Nov 2026. When a roster changes, this file changes with it.
 
 ## Mapping Rules
 - An agent does the work; a skill is a rule for how the work is done.
@@ -12,267 +14,369 @@ An agent is the one doing the work; a skill is a rule the agent follows while do
 - The mapping follows the curated set: a skill earns its place by being used, not by being listed.
 
 ## Forge core
-### `forge-specialist`
-Role:
-- handles work that does not fit one department
-
-Primary supporting skills:
-- `using-forge-anything`
-- `brainstorming`
-- `writing-plans`
-- `executing-plans`
-- `subagent-driven-development`
-- `verification-before-completion`
-
-Related agents for work outside one department:
-- founder-facing work: `fundraising-operator`
-- knowledge / documentation work: `obsidian-architect`
-- engineering build work: engineering department leads
-
-## Executive
-### `fundraising-operator`
+### `forge-ceo`
 Primary skills:
-- `founder-context`
-- `pitch-deck`
-- `investor-research`
-- `fundraising-email`
-- `data-room`
-- `board-update`
-- `accelerator-application`
-- `market-research`
-- `marketing-core`
+- `using-forge-anything`
+- `company-creator`
+
+### `forge-cfo`
+Primary skills:
+- none
+
+### `forge-cmo`
+Primary skills:
+- `public-speaking`
 - `founder-thought-leadership`
 
-Future optional additions:
-- investor CRM / pipeline hygiene
-- fundraising tracker
-- warm-intro network mapper
+### `forge-coo`
+Primary skills:
+- none
 
+### `forge-cto`
+Primary skills:
+- none
+
+### `forge-specialist`
+Primary skills:
+- `skill-factory`
+- `memory-engineering`
+- `team-orchestration`
+- `writing-skills`
+- `forge-specialist`
+
+## Product
 ### `product-manager`
 Primary skills:
+- `evidence-strategy`
 - `prd-flow`
+- `delivery-scrum`
+- `task-planning`
 - `writing-plans`
-- `brainstorming`
+- `executing-plans`
 - `ubiquitous-language`
-
-Potential external upgrades to evaluate:
-- competitive teardown
-- research synthesis
-- roadmap communication
 
 ## Engineering
-### `super-architect`
+### `analytics-architect`
 Primary skills:
-- `architect`
-- `writing-plans`
-- `ubiquitous-language`
-- `verification-before-completion`
-
-Potential external upgrades:
-- `senior-architect`
-- API design review
-- database design / schema planning
-- spec-driven workflow
-
-### `architect`
-Primary skills:
-- `architect`
-- `prd-flow`
-- `writing-plans`
-
-Potential external upgrades:
-- epic design
-- API reviewer
-- migration architect
-
-### `elite-developer`
-Primary skills:
-- `test-driven-development`
-- `systematic-debugging`
-- `verification-before-completion`
-- `subagent-driven-development`
-- `build-error-resolver`
-
-Potential external upgrades:
-- senior frontend / backend / fullstack specializations
-- spec-driven workflow
-- self-eval
-
-### `qa-automation-engineer`
-Primary skills:
-- `e2e-runner`
-- `test-driven-development`
-- `verification-before-completion`
-
-Potential external upgrades:
-- `playwright-pro`
-- API test suite builder
-- a11y audit
+- `business-intelligence`
+- `data-analysis`
+- `market-research`
+- `experimentation`
+- `analytics-tracking`
 
 ### `code-reviewer`
 Primary skills:
 - `adversarial-review`
-- `code-reviewer`
+- `adversarial-thinking`
+- `pr-report`
 
-Potential external upgrades:
-- `pr-review-expert`
-- adversarial reviewer
-
-### `build-error-resolver`
+### `qa-engineer`
 Primary skills:
-- `build-error-resolver`
+- `qa-core`
+- `playwright-pro`
+
+### `release-manager`
+Primary skills:
+- `release`
+- `release-changelog`
+
+### `software-engineer`
+Primary skills:
+- `bug-hunt`
+- `prompt-eval`
+- `rag-design`
+- `coding-discipline`
+- `mcp-builder`
 - `systematic-debugging`
-
-### `refactor-cleaner`
-Primary skills:
-- `refactor-cleaner`
+- `test-driven-development`
+- `subagent-driven-development`
+- `brainstorming`
 - `verification-before-completion`
+- `finishing-a-development-branch`
+- `create-agent-adapter`
 
-## Security
-### `security-guardian`
+### `super-architect`
 Primary skills:
-- `security-guardian`
-- `testing-for-xss-vulnerabilities-with-burpsuite`
-- `gdpr-compliance`
+- none
 
-Potential external upgrades:
-- cloud security
-- AI security
-- secrets manager
-
-### `security-reviewer`
+## Creative
+### `design-engineer`
 Primary skills:
-- `security-reviewer`
-- `verification-before-completion`
+- `design-engineering`
+- `diagram-design`
+- `theme-factory`
 
-Potential external upgrades:
-- appsec audit packs
-- adversarial review
-
-### `cyber-intel`
+### `game-developer`
 Primary skills:
-- `cyber-intel`
-- `monitoring-darkweb-sources`
-- `tracking-threat-actor-infrastructure`
-- `generating-threat-intelligence-reports`
+- `gamedev`
 
-### `perseus`
+### `image-producer`
 Primary skills:
-- red-team and offensive simulation skills already in repo
-
-## Growth
-### `growth-strategist`
-Primary skills:
-- `marketing-core`
-- `programmatic-seo`
-- `seo-audit`
-
-Potential external upgrades:
-- content creator
-- demand generation
-- free tool strategy
-- advanced marketing ops
-
-### `growth-engineer`
-Primary skills:
-- `analytics-tracking`
-- `marketing-core`
-
-Potential external upgrades:
-- campaign analytics
-- product analytics
-- lifecycle automation packs
-
-### `conversion-engineer`
-Primary skills:
-- `marketing-core`
-- `copy-editing`
-- CRO skills
-
-### `retention-specialist`
-Primary skills:
-- retention and lifecycle skills currently in repo
+- `image-generation`
+- `private-image`
 
 ### `social-strategist`
 Primary skills:
 - `social-production`
-- launch and distribution skills
+- `community-ops`
 
-### `analytics-architect`
+### `ui-ux-designer`
 Primary skills:
-- `analytics-architect`
-- `analytics-tracking`
+- `design-tools`
+
+### `video-analyst`
+Primary skills:
+- `video-analysis`
+
+### `videomaker`
+Primary skills:
+- `video-generation`
+- `motion-video`
+- `code-video`
+- `reel-edit`
+- `podcast-ops`
+- `product-demo`
+
+### `writing-quality`
+Primary skills:
+- `anti-slop-audit`
+- `anti-slop-constraint`
+- `voice-anchor`
+- `drift-audit`
+- `style-rewrite`
+
+## Growth
+### `growth-engineer`
+Primary skills:
+- `programmatic-seo`
+
+### `growth-strategist`
+Primary skills:
+- `marketing-core`
+- `paid-media`
+- `seo-audit`
+- `campaign-analytics`
+
+## Security
+### `cyber-intel`
+Primary skills:
+- `generating-threat-intelligence-reports`
+- `mapping-mitre-attack-techniques`
+- `monitoring-darkweb-sources`
+- `profiling-threat-actor-groups`
+- `tracking-threat-actor-infrastructure`
+
+### `perseus`
+Primary skills:
+- `bug-bounty-ops`
+- `eradicating-malware-from-infected-systems`
+- `executing-active-directory-attack-simulation`
+- `executing-phishing-simulation-campaign`
+- `executing-red-team-engagement-planning`
+- `executing-red-team-exercise`
+- `intercepting-mobile-traffic-with-burpsuite`
+- `investigating-phishing-email-incident`
+- `recovering-deleted-files-with-photorec`
+- `recovering-from-ransomware-attack`
+- `reverse-engineering-malware-with-ghidra`
+- `testing-for-xss-vulnerabilities-with-burpsuite`
+
+### `security-guardian`
+Primary skills:
+- `appsec-audit`
+- `security-audit`
+- `defi-audit`
+- `cloud-security`
 
 ## Infrastructure
+### `agent-ops`
+Primary skills:
+- `agent-browser`
+- `agent-desktop`
+
 ### `devops-engineer`
 Primary skills:
-- `devops-engineer`
-- `release-manager`
-- `finishing-a-development-branch`
+- `iac-core`
+- `data-infra`
+- `devops-generator`
+- `frontend-deploy`
+- `cms`
+- `ops-monitoring`
+- `secure-sandbox`
+- `messaging-infra`
 
-Potential external upgrades:
-- CI/CD pipeline builder
-- observability designer
-- incident commander
-- env secrets manager
-- terraform patterns
-
-### `release-manager`
+## Finance
+### `accounting-ops`
 Primary skills:
-- `release-manager`
-- `verification-before-completion`
+- `accounting-core`
+- `payments-core`
+- `cash-reporting`
+- `startup-books`
+- `invoice-lifecycle`
 
-Potential external upgrades:
-- changelog generator
-- release readiness automation
-
-### `experimentation-engineer`
+### `crypto`
 Primary skills:
-- `experimentation-engineer`
-- `experimentation`
+- `exchange-data`
+
+### `finops-manager`
+Primary skills:
+- `finance-based-pricing-advisor`
+- `saas-finops-optimization`
 
 ## Legal
 ### `legal-counsel`
 Primary skills:
-- `legal-tos-privacy`
 - `contract-review`
+- `grc-core`
+- `legal-ops`
 - `gdpr-compliance`
 - `iso-42001-ai-governance`
+- `gdpr-ccpa-privacy-auditor`
 - `open-source-license`
+- `legal-tos-privacy`
 
-Potential external upgrades:
-- privacy-policy
-- terms-of-service
-- regulatory domain packs where relevant
-
-## Finance
-### `finops-manager`
+## Knowledge
+### `doc-updater`
 Primary skills:
-- `finops-manager`
-- `saas-finops-optimization`
-- `finance-based-pricing-advisor`
-- `accounting-core`
+- `document-suite`
+- `meeting-notes`
+- `internal-comms`
+- `doc-maintenance`
 
-Potential external upgrades:
-- SaaS metrics coach
-- financial analyst style packs
-
-## Knowledge / Documentation
 ### `obsidian-architect`
 Primary skills:
+- `second-brain`
+- `workspace-notion`
+- `obsidian-markdown`
 - `obsidian-cli`
 - `obsidian-bases`
-- `obsidian-markdown`
-- `json-canvas`
 - `defuddle`
+- `json-canvas`
 
-Future responsibilities:
-- founder report assembly
-- project memory
-- department summary reports
+### `research`
+Primary skills:
+- `grounded-research`
+- `ai-research`
+
+### `scientific-researcher`
+Primary skills:
+- `scientific-research`
+
+## Operations
+### `automation`
+Primary skills:
+- `workflow-automation`
+
+### `sales`
+Primary skills:
+- `b2b-sales`
+- `negotiation`
+
+### `web-data-ops`
+Primary skills:
+- `web-data-ops`
+
+## Customer Success
+### `cs-manager`
+Primary skills:
+- `cs-lifecycle`
+- `churn-prevention`
+- `service-recovery`
+- `complaint-resolution`
+- `cs-ops`
+
+### `support-lead`
+Primary skills:
+- none
+
+## People
+### `people-ops`
+Primary skills:
+- `talent-acquisition`
+- `hr-generalist`
+- `recruiting-ops`
+
+## Data
+### `data-engineer`
+Primary skills:
+- `sql-queries`
+- `data-transform`
+
+## Trading
+### `trading-discipline`
+Primary skills:
+- `trading-discipline`
+- `broker-execution`
+
+### `trading-quant`
+Primary skills:
+- `quant-trading`
+- `token-research`
+- `technical-analysis`
+
+## External Relations
+### `fundraising-operator`
+Primary skills:
+- `vc-fundraising`
+- `pitch-deck`
+- `investor-research`
+- `accelerator-application`
+- `fundraising-email`
+- `founder-context`
+- `board-update`
+- `data-room`
+
+### `pr-comms`
+Primary skills:
+- `pr-comms`
+
+## Life
+### `health`
+Primary skills:
+- `fitness-nutrition`
+- `biohacking`
+- `longevity-workspace`
+- `medical-ops`
+- `habit-tracker`
+- `recovery-planner`
+- `wellness-suite`
+
+### `home`
+Primary skills:
+- `cooking`
+- `travel-planner`
+- `parenting`
+
+### `learning`
+Primary skills:
+- `education-suite`
+- `socratic-tutor`
+- `career-kit`
+- `language-learning`
+
+### `mind`
+Primary skills:
+- `journal-framework`
+- `reflective-listening`
+- `faith-practice`
+
+### `money`
+Primary skills:
+- `personal-finance`
+
+### `personal-assistant`
+Primary skills:
+- none
+
+### `relationships`
+Primary skills:
+- `couples-analysis`
+- `relationship-maintenance`
+- `dating-coach`
+
+## Unpaired skills
+None. All 176 skills are rostered to an agent above.
 
 ## Current Priorities
-1. stabilize the Executive mapping
-2. check each department mapping against the curated essential set
-3. define standard report outputs per department
-4. pair every skill with the agent that uses it, and list the unpaired ones here
+1. Keep this mapping in step with the agent rosters; a roster change updates this file.
+2. Define standard report outputs per department.

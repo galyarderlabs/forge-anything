@@ -17,7 +17,8 @@ The founder is the human owner, the final decision-maker, and the approval gate.
 The coordinators:
 
 - `forge-ceo`: directs the work and keeps quality high across the system.
-- `forge-cfo-coo`: owns operations and finance.
+- `forge-cfo`: owns finance.
+- `forge-coo`: owns operations.
 - `forge-cmo`: owns growth and message.
 - `forge-cto`: owns architecture and engineering.
 - `forge-specialist`: handles work that does not fit one department.
@@ -33,7 +34,7 @@ Purpose:
 - founder narrative and market credibility
 
 Lead agent:
-- `fundraising-operator`
+- `fundraising-operator` (temporary seat; the Q2 department question is still open)
 
 Key outputs:
 - founder context
@@ -60,7 +61,6 @@ Purpose:
 
 Lead agents:
 - `product-manager`
-- `planner`
 
 Key outputs:
 - PRDs
@@ -84,12 +84,7 @@ Purpose:
 
 Lead agents:
 - `super-architect`
-- `architect`
-- `elite-developer`
-- `qa-automation-engineer`
-- `code-reviewer`
-- `build-error-resolver`
-- `refactor-cleaner`
+- `software-engineer`
 
 Key outputs:
 - architecture decisions
@@ -116,7 +111,6 @@ Purpose:
 
 Lead agents:
 - `ui-ux-designer`
-- `interface-designer`
 
 Key outputs:
 - design work
@@ -139,11 +133,6 @@ Purpose:
 
 Lead agents:
 - `growth-strategist`
-- `growth-engineer`
-- `conversion-engineer`
-- `retention-specialist`
-- `social-strategist`
-- `analytics-architect`
 
 Key outputs:
 - growth strategy
@@ -168,9 +157,6 @@ Purpose:
 
 Lead agents:
 - `security-guardian`
-- `security-reviewer`
-- `cyber-intel`
-- `perseus`
 
 Key outputs:
 - threat findings
@@ -188,18 +174,15 @@ Purpose:
 - deployment
 - release management
 - runtime operations
-- experimentation logistics
 
 Lead agents:
 - `devops-engineer`
 - `release-manager`
-- `experimentation-engineer`
 
 Key outputs:
 - deployment plans
 - release checklists
 - infra decisions
-- experiment rollout plans
 
 Reports to founder:
 - release readiness
@@ -251,7 +234,8 @@ Purpose:
 - convert execution into durable knowledge
 - keep founder-readable reports
 
-Lead agent:
+Lead agents:
+- `doc-updater`
 - `obsidian-architect`
 
 Key outputs:
@@ -273,8 +257,10 @@ Purpose:
 - workflow automation
 - data quality and source tracing
 
-Lead agent:
-- not yet assigned (agent restructure, later step)
+Agents:
+- `automation`
+- `sales`
+- `web-data-ops`
 
 Key outputs:
 - sourced datasets
@@ -313,8 +299,8 @@ Purpose:
 - recruiting funnel
 - roles and accountability
 
-Lead agent:
-- not yet assigned (agent restructure, later step)
+Agents:
+- `people-ops`
 
 Key outputs:
 - hiring funnel numbers
@@ -333,8 +319,8 @@ Purpose:
 - data transformation
 - business intelligence
 
-Lead agent:
-- not yet assigned (agent restructure, later step)
+Agents:
+- `data-engineer`
 
 Key outputs:
 - pipelines and data models
@@ -354,8 +340,9 @@ Purpose:
 - technical analysis
 - trading discipline and broker execution
 
-Lead agent:
-- not yet assigned (agent restructure, later step)
+Agents:
+- `trading-quant`
+- `trading-discipline`
 
 Key outputs:
 - backtests and analysis
@@ -374,8 +361,8 @@ Purpose:
 - fundraising
 - external partnerships
 
-Lead agent:
-- not yet assigned (agent restructure, later step)
+Lead agents:
+- `fundraising-operator`
 
 Key outputs:
 - releases and media kits
@@ -397,8 +384,14 @@ Purpose:
 - personal money and reserves
 - home and daily environment
 
-Lead agent:
-- not yet assigned (agent restructure, later step)
+Agents:
+- `health`
+- `home`
+- `learning`
+- `mind`
+- `money`
+- `personal-assistant`
+- `relationships`
 
 Key outputs:
 - health and recovery check-ins

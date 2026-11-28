@@ -26,7 +26,7 @@ The missing piece is not another coding agent or a prompt pack. It is the operat
 ## Who it is for
 
 - **Solo founders and small technical teams** running AI agents across more than one function, who need the work to be structured and reviewable.
-- **Operators already using an agentic coding tool** (Claude Code, Cursor, Codex, OpenCode, Antigravity, OpenClaw, Hermes, or a similar harness) who want reusable operating rules instead of one-off prompts.
+- **Operators already using an agentic coding tool** (Claude Code, Cursor, Codex, OpenCode, Antigravity, Hermes, or a similar harness) who want reusable operating rules instead of one-off prompts.
 - **Maintainers and contributors** who add skills, agents, and commands and need a clear contract for what a good addition looks like.
 
 ## Goals
@@ -52,7 +52,7 @@ The missing piece is not another coding agent or a prompt pack. It is the operat
 ### Workflow
 
 - **R1 - Goal to Ship loop.** A piece of work should follow goal, plan, build, verify, ship, ending in distribution. `[implemented]` - described in `README.md`, `AGENTS.md`, and `WORKFLOW.md`.
-- **R2 - Operating modes.** BUILD, INCIDENT, and EXPERIMENT should each have defined rules and evidence expectations. `[implemented]` - `WORKFLOW.md`.
+- **R2 - No workflow modes.** There is one flow, Ideas to Give Back; no mode overrides the planning, test, or verification gates. `[decided 28 Nov 2026]` - the Operational Modes table was removed from `WORKFLOW.md` and the `/incident` and `/experiment` commands deleted.
 - **R3 - Verification ladder.** Cheaper proof (logic, interface, system) should be used before human review gates, and completion claims should cite evidence. `[implemented]` - `WORKFLOW.md`.
 - **R4 - Traceability of work.** Work should map to a scoped issue, brief, plan, or decision. `[implemented]` - stated as a foundation protocol in `WORKFLOW.md`.
 
@@ -68,10 +68,10 @@ The missing piece is not another coding agent or a prompt pack. It is the operat
 
 - **R10 - Plugin-only install.** Users install through their harness plugin manager, with no manual setup and no scripts. `[implemented]` - `docs/INTEGRATION.md`.
 - **R11 - Skills-only install.** Users who only want the skills should be able to install them without a harness plugin. `[implemented]` - `npx skills add galyarderlabs/forge-anything`.
-- **R12 - Prebuilt CLI install.** Users should be able to install the prebuilt `forge` CLI binary without a Rust toolchain. `[implemented]` - `curl -fsSL https://raw.githubusercontent.com/galyarderlabs/forge-anything/main/install.sh | sh`, or `cargo install --path crates/forge` from source.
+- **R12 - Prebuilt CLI install.** Users should be able to install the prebuilt `forge` CLI binary without a Rust toolchain. `[partial]` - the install script exists (`install.sh`, tested locally) but no release ships a binary yet, so the curl path is unproven; the working path today is `cargo install --path crates/forge` from source. The first binary release needs a version tag push.
 - **R13 - Per-project scaffold.** A user should be able to scaffold an operating structure into a project. `[implemented]` - `forge scaffold` (Rust, `crates/forge-scaffold`).
 - **R14 - MCP distribution.** The MCP server should expose the skills, agents, commands, and scaffold over stdio, local only, no network. `[implemented]` - `forge mcp` (`list_skills`, `read_skill`, `read_command`, `scaffold`).
-- **R15 - A single version authority.** The package metadata, the changelog, git tags, and GitHub releases should agree on one version. `[implemented]` - version 3.0.2 across `package.json`, `CHANGELOG.md`, and the release tags.
+- **R15 - A single version authority.** The package metadata, the changelog, git tags, and GitHub releases should agree on one version. `[partial]` - version 3.0.2 across `package.json` and the manifests; `CHANGELOG.md` stops at 2.0.0 and no v3.0.2 tag exists yet.
 
 ### Verification and release
 

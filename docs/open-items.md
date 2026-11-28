@@ -36,7 +36,7 @@ GitHub issues, and Galih's calls.
   the five-dimension framework; 8 no-registry-row agents unchanged).
   Composition block added to all 54 souls 27 Nov 2026 (83d29725):
   Invoke directly when / Invoke via / Do not invoke from another
-  agent; dispatch map read from all 25 command files. Three commands
+  agent; dispatch map read from all 29 command files. Three commands
   repointed at successor agents the same day: /clean to
   software-engineer, /video to videomaker, /cybersecurity to perseus
   (offensive job; the old defensive reviewer was a mismatch, and the
@@ -59,15 +59,13 @@ GitHub issues, and Galih's calls.
   coreyhaines31/community-marketing v2.0.5, dead absolutelyskilled
   URL replaced). Scaffold department
   templates DONE: 17 departments seeded.
-- [x] Forge value paragraph on all 175 skills: DONE 26 Nov 2026
+- [x] Forge value paragraph on all 176 skills: DONE 26 Nov 2026
   (Galih 07:18: the value is mandatory, add it). The 67 pre-curation
   skills got their `## The Forge Mark` (commit f433f8f1); the bootstrap
   file was trimmed to stay under the 10,000-char Hermes limit
-  (9,778 assembled after the trim).
-- [ ] Scaffold curated lists (33 skills / 18 agents) still from issue
-  #212, pre-registry. Count moved 38 to 33 in the Phase 2 fix (9
-  deleted skills replaced by their successors). Changes when the plan
-  is approved.
+  (9,762 assembled after the trim).
+- [ ] Scaffold curated lists (32 skills / 17 agents) still from issue
+  #212, pre-registry. Changes when the plan is approved.
 - [x] Registry v20 saved as the standard (25 Nov 2026, full file
   received, 121 rows counted). Replaces v15.
 - [x] Registry URLs without sources: all 6 (v14 data-scientist,
@@ -81,7 +79,7 @@ GitHub issues, and Galih's calls.
 - [ ] Registry rekap count discrepancy (118 claimed vs 121 counted;
   4 restores claimed vs 7 named). Recorded in the review; needs a
   closure sweep before the NOL GAP claim is trusted.
-- [ ] fitness-nutrition URL still HTTP 500 (4th check, 25 Nov 2026);
+- [ ] fitness-nutrition URL still HTTP 500 (5th check, 25 Nov 2026);
   Locke and Latham citation still 404 (25 Nov 2026).
 - [x] `skills/social-content/references/reverse-engineering.md` leaked
   sections (Technical Integrity, Corporate Reporting). Resolved by
@@ -94,7 +92,7 @@ GitHub issues, and Galih's calls.
 - [x] Bundle drift (6 of 10 bundles did not match sync-bundles.py
   regen): resolved by DELETION, not regen, 25 Nov 2026 — all 18 bundle
   dirs + `scripts/sync-bundles.py` removed (commit 4ad7ac51);
-  `skills.json` regenerated to 175 entries, 0 bundles. Scaffold source
+  `skills.json` regenerated to 176 entries, 0 bundles. Scaffold source
   marker moved to `skills/using-forge-anything/SKILL.md`.
 - [ ] Banned-term cleanup in skill/agent/command bodies (recounted
   25 Nov 2026 after the cut, case-insensitive file count): Obsidian

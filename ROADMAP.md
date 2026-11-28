@@ -81,11 +81,8 @@ What is not there yet:
   stops at 2.0.0. It needs entries for the rebrand, the GPL-3.0 license,
   the Rust scaffold and CLI, the plugin surface, the Hermes hook, the
   integrations removal, and the distribution plus MCP build.
-- **Open issues.** #205 (a worked end-to-end mission example), #206
-  (the stale directory reference; the references are removed by
-  the AGENTS.md rewrite, so this can close once that lands), #207 (guard
-  manifest and generated-surface parity in CI), #19 (listing in
-  awesome-codex-plugins).
+- **Open issues.** #205 (a worked end-to-end mission example) and #19 (listing in
+  awesome-codex-plugins). #206 and #207 closed 25 Nov 2026.
 - **Open items.** The full list of everything not done yet, in one
   place: `docs/open-items.md`.
 

@@ -1,5 +1,7 @@
 # Forge Anything - Organization Chart
 
+Regenerated from the live agent rosters (`agents/<name>/README.md`) on 28 Nov 2026. When a roster changes, this file changes with it.
+
 ## Executive Layer
 
 ### Founder (Human)
@@ -12,9 +14,9 @@
 - **Protocol:** Verified execution and executive coordination
 - **Responsibilities:**
   - Receive founder intent
-  - Delegate to Department Heads (CTO, CMO, CFO/COO)
+  - Delegate to Department Heads (CTO, CMO, CFO, COO)
   - Provide high-signal executive summaries
-- **Direct Reports:** forge-cto, forge-cmo, forge-cfo-coo
+- **Direct Reports:** forge-cto, forge-cmo, forge-cfo, forge-coo
 
 ### forge-cto (Chief Technology Officer)
 - **Persona:** `forge-cto`
@@ -28,31 +30,36 @@
 - **Department:** Growth.
 - **Responsibilities:** Distribution, revenue (cuan), market visibility.
 
-### forge-cfo-coo (Chief Financial & Operating Officer)
-- **Persona:** `forge-cfo-coo`
-- **Protocol:** Operations, finance, compliance, and reliability
-- **Department:** Finance, Legal, Knowledge.
-- **Responsibilities:** Compliance, budget efficiency, operational reliability.
+### forge-cfo (Chief Financial Officer)
+- **Persona:** `forge-cfo`
+- **Protocol:** Finance, runway, pricing, and financial state
+- **Department:** Finance.
+- **Responsibilities:** Budget efficiency, runway, pricing.
+
+### forge-coo (Chief Operating Officer)
+- **Persona:** `forge-coo`
+- **Protocol:** Operations, compliance, and reliability
+- **Department:** Operations.
+- **Responsibilities:** Operational reliability, compliance, delivery cadence.
 
 
 ## Department Structure
 
 ### 1. Executive
-**Department Head:** `fundraising-operator`
+**Department Head:** `fundraising-operator` (temporary seat; the Q2 department question is still open)
 
 **Purpose:** Founder context, investor relations, board updates, and diligence readiness
 
-**Team Members (Skills):**
-- `founder-context` - Founder narrative and positioning
-- `pitch-deck` - Pitch deck creation
-- `investor-research` - Investor targeting and research
-- `fundraising-email` - Investor outreach emails
-- `data-room` - Due diligence preparation
-- `board-update` - Board reporting
-- `accelerator-application` - Accelerator applications
-- `market-research` - Market analysis
-- `marketing-core` - Marketing and lead qualification
-- `founder-thought-leadership` - Founder content strategy
+**Team Members:**
+- `forge-ceo` - Goal-to-ship loop coordinator
+- `forge-cfo` - Money coordinator
+- `forge-cmo` - Growth and marketing coordinator
+- `forge-coo` - Operations coordinator
+- `forge-cto` - Engineering coordinator
+- `forge-specialist` - Cross-department generalist + agent template owner + agent-team coordination
+
+**Skills:**
+- `company-creator`, `forge-specialist`, `founder-thought-leadership`, `memory-engineering`, `public-speaking`, `skill-factory`, `team-orchestration`, `using-forge-anything`, `writing-skills`
 
 **Reports to Founder:**
 - Raise readiness status
@@ -62,15 +69,15 @@
 
 
 ### 2. Product
-**Department Heads:** `product-manager`, `planner`
+**Department Head:** `product-manager`
 
 **Purpose:** Product direction, prioritization, roadmap, scope discipline
 
-**Team Members (Skills):**
-- `prd-flow` - PRD to plan to issues flow
-- `brainstorming` - Socratic design refinement
-- `writing-plans` - Implementation planning
-- `ubiquitous-language` - Domain language definition
+**Team Members:**
+- `product-manager` - Own the product from discovery to shipped, including planning and delivery
+
+**Skills:**
+- `delivery-scrum`, `evidence-strategy`, `executing-plans`, `prd-flow`, `task-planning`, `ubiquitous-language`, `writing-plans`
 
 **Reports to Founder:**
 - What is being built
@@ -80,93 +87,106 @@
 
 
 ### 3. Engineering
-**Department Heads:** `super-architect`, `architect`, `elite-developer`
+**Department Heads:** `super-architect`, `software-engineer`
 
 **Purpose:** Architecture, implementation, testing, code quality, delivery
 
-**Senior Engineers:**
-- `super-architect` - System design, ADRs, vertical slices
-- `architect` - Technical architecture
-- `elite-developer` - Implementation, TDD, debugging
-- `build-error-resolver` - Build/type error resolution
-- `code-reviewer` - Code review
-- `refactor-cleaner` - Dead code cleanup
-- `qa-automation-engineer` - E2E testing
-- `e2e-runner` - Playwright test execution
-- `doc-updater` - Documentation maintenance
-- `tdd-guide` - TDD enforcement
+**Team Members:**
+- `analytics-architect` - Learn from data: BI, analysis, experiments, market research
+- `code-reviewer` - Review code and ideas adversarially
+- `qa-engineer` - Prove the product works end-to-end
+- `release-manager` - Run releases
+- `software-engineer` - Build and fix software
+- `super-architect` - System design and technical decisions
 
-**Team Members (Skills):**
-- `test-driven-development` - TDD methodology
-- `systematic-debugging` - Root cause analysis
-- `verification-before-completion` - Quality gates
-- `subagent-driven-development` - Parallel execution
-- `executing-plans` - Plan execution
-- `adversarial-review` - Adversarial review workflow
-- `finishing-a-development-branch` - Branch completion
+**Skills:**
+- `adversarial-review`, `adversarial-thinking`, `analytics-tracking`, `brainstorming`, `bug-hunt`, `business-intelligence`, `coding-discipline`, `create-agent-adapter`, `data-analysis`, `experimentation`, `finishing-a-development-branch`, `market-research`, `mcp-builder`, `playwright-pro`, `pr-report`, `prompt-eval`, `qa-core`, `rag-design`, `release`, `release-changelog`, `subagent-driven-development`, `systematic-debugging`, `test-driven-development`, `verification-before-completion`
+
+**Reports to Founder:**
+- Delivery status
+- Technical risk
+- Quality status
+- Blockers
 
 
 ### 4. Creative
-**Department Heads:** `ui-ux-designer`, `interface-designer`
+**Department Head:** `ui-ux-designer`
 
 **Purpose:** Design, video, writing, images, branding, and content creation
 
-**Senior Creative:**
-- `ui-ux-designer` - UI/UX design
-- `interface-designer` - Interface design
+**Team Members:**
+- `design-engineer` - Design engineering + motion + diagram + theming in code
+- `game-developer` - Game development per engine
+- `image-producer` - Image production
+- `social-strategist` - Social + community
+- `ui-ux-designer` - Interface design
+- `video-analyst` - Analysis of existing video, shot by shot
+- `videomaker` - Video production
+- `writing-quality` - Write human and on-voice
 
-**Team Members (Skills):**
-- `social-production` - Social and content production
-- `writing-skills` - Writing craft
+**Skills:**
+- `anti-slop-audit`, `anti-slop-constraint`, `code-video`, `community-ops`, `design-engineering`, `design-tools`, `diagram-design`, `drift-audit`, `gamedev`, `image-generation`, `motion-video`, `podcast-ops`, `private-image`, `product-demo`, `reel-edit`, `social-production`, `style-rewrite`, `theme-factory`, `video-analysis`, `video-generation`, `voice-anchor`
+
+**Reports to Founder:**
+- Brand consistency
+- Content quality
+- Delivery status
+
 
 ### 5. Growth
-**Department Heads:** `growth-strategist`, `growth-engineer`
+**Department Head:** `growth-strategist`
 
 **Purpose:** Acquisition, conversion, retention, distribution, analytics
 
-**Senior Growth:**
-- `growth-strategist` - SEO, copywriting, strategy
-- `growth-engineer` - Engineering-as-marketing
-- `conversion-engineer` - CRO, onboarding optimization
-- `retention-specialist` - LTV, engagement
-- `social-strategist` - Social distribution
-- `analytics-architect` - Tracking, KPIs
+**Team Members:**
+- `growth-engineer` - Build growth systems (programmatic SEO, referral loops, tools)
+- `growth-strategist` - Marketing strategy + paid media + activation
 
-**Team Members (Skills):**
-- `seo-audit` - SEO analysis
-- `marketing-core` - Marketing strategy and tactics
-- `analytics-tracking` - Event tracking
+**Skills:**
+- `campaign-analytics`, `marketing-core`, `paid-media`, `programmatic-seo`, `seo-audit`
+
+**Reports to Founder:**
+- Demand quality
+- Funnel performance
+- Market response
+- Leverage opportunities
 
 
 ### 6. Security
-**Department Heads:** `security-guardian`, `perseus`
+**Department Head:** `security-guardian`
 
 **Purpose:** Security review, threat analysis, offensive/defensive posture
 
-**Senior Security:**
-- `security-guardian` - Security audits, OWASP
-- `security-reviewer` - Vulnerability detection
-- `perseus` - Offensive security, pentesting
-- `cyber-intel` - Threat intelligence
+**Team Members:**
+- `cyber-intel` - External threat intel
+- `perseus` - Offensive testing (red team, pentest)
+- `security-guardian` - Audit and guard security (AppSec + DeFi)
 
-**Team Members (Skills):**
-- `executing-red-team-exercise` - Red team operations
-- `testing-for-xss-vulnerabilities-with-burpsuite` - XSS testing
-- `monitoring-darkweb-sources` - Dark web monitoring
-- `tracking-threat-actor-infrastructure` - Threat tracking
-- `executing-active-directory-attack-simulation` - AD security
-- `investigating-phishing-email-incident` - Phishing analysis
+**Skills:**
+- `appsec-audit`, `bug-bounty-ops`, `cloud-security`, `defi-audit`, `eradicating-malware-from-infected-systems`, `executing-active-directory-attack-simulation`, `executing-phishing-simulation-campaign`, `executing-red-team-engagement-planning`, `executing-red-team-exercise`, `generating-threat-intelligence-reports`, `intercepting-mobile-traffic-with-burpsuite`, `investigating-phishing-email-incident`, `mapping-mitre-attack-techniques`, `monitoring-darkweb-sources`, `profiling-threat-actor-groups`, `recovering-deleted-files-with-photorec`, `recovering-from-ransomware-attack`, `reverse-engineering-malware-with-ghidra`, `security-audit`, `testing-for-xss-vulnerabilities-with-burpsuite`, `tracking-threat-actor-infrastructure`
+
+**Reports to Founder:**
+- Security posture
+- Urgent risk
+- Remediation priority
 
 
-### 7. Infrastructure / Operations
+### 7. Infrastructure
 **Department Heads:** `devops-engineer`, `release-manager`
 
-**Purpose:** Deployment, release management, runtime operations, experimentation
+**Purpose:** Deployment, release management, runtime operations
 
-**Senior Ops:**
-- `devops-engineer` - CI/CD, Docker, infrastructure
-- `release-manager` - Versioning, changelogs, launches
-- `experimentation-engineer` - A/B test infrastructure
+**Team Members:**
+- `agent-ops` - Operate a computer/browser on an agent's behalf
+- `devops-engineer` - Run infra + deploys + messaging
+
+**Skills:**
+- `agent-browser`, `agent-desktop`, `cms`, `data-infra`, `devops-generator`, `frontend-deploy`, `iac-core`, `messaging-infra`, `ops-monitoring`, `secure-sandbox`
+
+**Reports to Founder:**
+- Release readiness
+- Infra risk
+- Operational reliability
 
 
 ### 8. Finance
@@ -174,48 +194,67 @@
 
 **Purpose:** Cost optimization, pricing economics
 
-**Senior Advisors:**
-- `finops-manager` - Cloud cost, pricing strategy
+**Team Members:**
+- `accounting-ops` - Books, payments, invoices, cash reports
+- `crypto` - Market data + crypto custody
+- `finops-manager` - Cloud cost + pricing
 
-**Team Members (Skills):**
-- `saas-finops-optimization` - Cloud cost optimization
-- `finance-based-pricing-advisor` - Pricing strategy
-- `accounting-core` - Accounting and financial records
+**Skills:**
+- `accounting-core`, `cash-reporting`, `exchange-data`, `finance-based-pricing-advisor`, `invoice-lifecycle`, `payments-core`, `saas-finops-optimization`, `startup-books`
+
+**Reports to Founder:**
+- Financial risk
+- Runway
+- Cost drift
+
 
 ### 9. Legal
 **Department Head:** `legal-counsel`
 
 **Purpose:** Legal protection, compliance
 
-**Senior Advisors:**
-- `legal-counsel` - TOS/Privacy, compliance
+**Team Members:**
+- `legal-counsel` - Legal review + GRC
 
-**Team Members (Skills):**
-- `legal-tos-privacy` - Terms and privacy policies
-- `gdpr-compliance` - GDPR audit
-- `iso-42001-ai-governance` - AI governance
-- `open-source-license` - License review
-- `contract-review` - Contract analysis
+**Skills:**
+- `contract-review`, `gdpr-ccpa-privacy-auditor`, `gdpr-compliance`, `grc-core`, `iso-42001-ai-governance`, `legal-ops`, `legal-tos-privacy`, `open-source-license`
+
+**Reports to Founder:**
+- Legal risk
+- Compliance gaps
 
 ### 10. Knowledge / Documentation
-**Department Head:** `obsidian-architect`
+**Department Heads:** `doc-updater`, `obsidian-architect`
 
 **Purpose:** Memory preservation, decision history, visual maps, founder reports
 
-**Team Members (Skills):**
-- `obsidian-cli` - Obsidian automation
-- `obsidian-bases` - Base template system
-- `obsidian-markdown` - Markdown conventions
-- `json-canvas` - Visual mapping
-- `defuddle` - Content extraction
+**Team Members:**
+- `doc-updater` - Maintain documents + meeting notes + internal comms
+- `obsidian-architect` - Knowledge workspace (Obsidian + Notion)
+- `research` - Grounded research + structured data + AI research
+- `scientific-researcher` - Scientific research + scientific databases
+
+**Skills:**
+- `ai-research`, `defuddle`, `doc-maintenance`, `document-suite`, `grounded-research`, `internal-comms`, `json-canvas`, `meeting-notes`, `obsidian-bases`, `obsidian-cli`, `obsidian-markdown`, `scientific-research`, `second-brain`, `workspace-notion`
+
+**Reports to Founder:**
+- Current state snapshot
+- What changed
+- What has been decided
+- What must be remembered
 
 ### 11. Operations
-**Department Head:** not yet assigned (agent restructure, later step)
+**Department Head:** none designated
 
 **Purpose:** Web data ops, sales, and automation
 
-**Team Members (Skills):**
-- No skills placed yet; the skill placement step assigns them
+**Team Members:**
+- `automation` - n8n/Zapier workflows
+- `sales` - B2B sales + negotiation
+- `web-data-ops` - Web data ops (scraping)
+
+**Skills:**
+- `b2b-sales`, `negotiation`, `web-data-ops`, `workflow-automation`
 
 **Reports to Founder:**
 - Data quality and source traceability
@@ -227,11 +266,12 @@
 
 **Purpose:** Customer lifecycle, health scores, churn prevention, and support
 
-**Senior Support:**
-- `support-lead` - Support triage, post-launch issue ownership
+**Team Members:**
+- `cs-manager` - Lifecycle customer success
+- `support-lead` - Triage + ownership of post-launch issues
 
-**Team Members (Skills):**
-- No skills placed yet; the skill placement step assigns them
+**Skills:**
+- `churn-prevention`, `complaint-resolution`, `cs-lifecycle`, `cs-ops`, `service-recovery`
 
 **Reports to Founder:**
 - Customer health and at-risk accounts
@@ -239,12 +279,15 @@
 - Support load and resolution status
 
 ### 13. People
-**Department Head:** not yet assigned (agent restructure, later step)
+**Department Head:** none designated
 
 **Purpose:** Talent acquisition, HR processes, and recruiting
 
-**Team Members (Skills):**
-- No skills placed yet; the skill placement step assigns them
+**Team Members:**
+- `people-ops` - Talent acquisition + HR + recruiting
+
+**Skills:**
+- `hr-generalist`, `recruiting-ops`, `talent-acquisition`
 
 **Reports to Founder:**
 - Hiring funnel status
@@ -252,14 +295,15 @@
 - Team health
 
 ### 14. Data
-**Department Head:** not yet assigned (agent restructure, later step)
+**Department Head:** none designated
 
 **Purpose:** Data engineering, SQL, data transformation, and business intelligence
 
-**Team Members (Skills):**
-- `data-analysis` - Data analysis and reporting
-- `data-infra` - Data infrastructure
-- `business-intelligence` - Business intelligence
+**Team Members:**
+- `data-engineer` - SQL + data transformation
+
+**Skills:**
+- `data-transform`, `sql-queries`
 
 **Reports to Founder:**
 - Pipeline health
@@ -267,12 +311,16 @@
 - Analysis status
 
 ### 15. Trading
-**Department Head:** not yet assigned (agent restructure, later step)
+**Department Head:** none designated
 
 **Purpose:** Quantitative analysis, DeFi, token research, technical analysis, and trading discipline
 
-**Team Members (Skills):**
-- `exchange-data` - Exchange data for analysis
+**Team Members:**
+- `trading-discipline` - Trading discipline gate + broker execution
+- `trading-quant` - Quantitative analysis + DeFi + token research + TA
+
+**Skills:**
+- `broker-execution`, `quant-trading`, `technical-analysis`, `token-research`, `trading-discipline`
 
 **Reports to Founder:**
 - Signal and analysis quality
@@ -280,12 +328,16 @@
 - Position risk and discipline gaps
 
 ### 16. External Relations
-**Department Head:** not yet assigned (agent restructure, later step)
+**Department Head:** `fundraising-operator`
 
 **Purpose:** PR, media production, crisis communications, fundraising, and external partnerships
 
-**Team Members (Skills):**
-- No skills placed yet; the skill placement step assigns them
+**Team Members:**
+- `fundraising-operator` - Raise funds from investors
+- `pr-comms` - PR + media production + crisis comms
+
+**Skills:**
+- `accelerator-application`, `board-update`, `data-room`, `founder-context`, `fundraising-email`, `investor-research`, `pitch-deck`, `pr-comms`, `vc-fundraising`
 
 **Reports to Founder:**
 - Release and coverage status
@@ -293,12 +345,21 @@
 - Fundraising state
 
 ### 17. Life
-**Department Head:** not yet assigned (agent restructure, later step)
+**Department Head:** none designated
 
 **Purpose:** Health, mind, relationships, learning, money, and home
 
-**Team Members (Skills):**
-- No skills placed yet; the skill placement step assigns them
+**Team Members:**
+- `health` - Body health
+- `home` - Home life
+- `learning` - Learning
+- `mind` - Mental life
+- `money` - Personal finance
+- `personal-assistant` - Life coordinator
+- `relationships` - Relationships
+
+**Skills:**
+- `biohacking`, `career-kit`, `cooking`, `couples-analysis`, `dating-coach`, `education-suite`, `faith-practice`, `fitness-nutrition`, `habit-tracker`, `journal-framework`, `language-learning`, `longevity-workspace`, `medical-ops`, `parenting`, `personal-finance`, `recovery-planner`, `reflective-listening`, `relationship-maintenance`, `socratic-tutor`, `travel-planner`, `wellness-suite`
 
 **Reports to Founder:**
 - Health and recovery state
