@@ -41,6 +41,7 @@ feedback-export-*
 /.idea/
 /.agents/*
 !/.agents/plugins/
+!/.agents/agents/
 
 # Doc maintenance cursor
 .doc-review-cursor

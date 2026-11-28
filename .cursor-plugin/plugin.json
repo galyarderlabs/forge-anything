@@ -1,0 +1,17 @@
+{
+    "agents": "./.cursor/agents",
+    "author": {
+        "name": "Galyarder Labs",
+        "url": "https://galyarderlabs.com"
+    },
+    "commands": "./.cursor/commands",
+    "description": "Forge anything with AI agents.",
+    "homepage": "https://github.com/galyarderlabs/forge-anything",
+    "hooks": "hooks/hooks-cursor.json",
+    "license": "GPL-3.0-or-later",
+    "mcpServers": "./mcp.json",
+    "name": "forge-anything",
+    "repository": "https://github.com/galyarderlabs/forge-anything",
+    "skills": "./skills",
+    "version": "3.0.2"
+}

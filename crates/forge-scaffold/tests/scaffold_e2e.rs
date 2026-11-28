@@ -157,6 +157,52 @@ fn scaffold_produces_a_ready_repo() {
     );
     assert_file(&target.join(".github/extensions/forge-anything/extension.mjs"));
 
+    // Curated agents, in every harness's native form.
+    assert_eq!(
+        count_ext(&target.join(".claude/agents"), "md"),
+        17,
+        "all 17 curated Claude agents copied"
+    );
+    assert_eq!(
+        count_ext(&target.join(".cursor/agents"), "md"),
+        17,
+        "all 17 curated Cursor agents copied"
+    );
+    assert_eq!(
+        count_ext(&target.join(".opencode/agents"), "md"),
+        17,
+        "all 17 curated OpenCode agents copied"
+    );
+    assert_eq!(
+        count_ext(&target.join(".codex/agents"), "toml"),
+        17,
+        "all 17 curated Codex agents copied"
+    );
+    assert_eq!(
+        count_ext(&target.join(".pi/agents"), "md"),
+        17,
+        "all 17 curated Pi agents copied"
+    );
+    assert_eq!(
+        fs::read_dir(target.join(".github/agents"))
+            .expect("read copilot agents")
+            .count(),
+        17,
+        "all 17 curated Copilot agents copied"
+    );
+    assert_eq!(
+        count_ext(&target.join(".agents/agents"), "md"),
+        17,
+        "all 17 curated Antigravity workspace agents copied"
+    );
+
+    // Project MCP configs for every harness that reads them.
+    assert_file(&target.join(".mcp.json"));
+    assert_file(&target.join("mcp.json"));
+    assert_file(&target.join(".cursor/mcp.json"));
+    assert_file(&target.join(".codex/config.toml"));
+    assert_file(&target.join(".opencode/opencode.json"));
+
     // Docs structure + departments.
     for d in ["specs", "plans", "reports", "templates", "design"] {
         assert_dir(&target.join("docs").join(d));
@@ -179,10 +225,15 @@ fn scaffold_produces_a_ready_repo() {
         .collect();
     assert!(!design_specs.is_empty(), "design specs seeded");
 
-    // No per-host manifests or rules: skills/ and agents/ are read
-    // straight from the project folder. Commands are the exception: their
+    // No plugin manifests or rules: skills/ and agents/ are read straight
+    // from the project folder. Commands and agents are the exception: their
     // per-harness copies (.opencode/commands, .cursor/commands,
-    // .github/extensions) are asserted in the commands section above.
+    // .github/extensions, and the seven agent dirs) are asserted in the
+    // sections above, and so are the project MCP configs (.mcp.json,
+    // mcp.json, .cursor/mcp.json, .codex/config.toml,
+    // .opencode/opencode.json). Those configs are project config, not
+    // plugin manifests: the manifests themselves stay in the Forge
+    // Anything repo.
     assert!(
         !target.join(".claude-plugin").exists(),
         "no host manifest is scaffolded"

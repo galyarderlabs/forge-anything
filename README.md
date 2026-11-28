@@ -48,7 +48,7 @@ Three pieces deliver it to the agent:
 
 - **Scaffold**: `forge scaffold` drops a tidy repo into a folder, with the curated skills, agents, and commands. Start clean, not from a blank page.
 - **CLI**: `forge` is the command line tool. It scaffolds a project, imports company packages ([docs/company-import.md](docs/company-import.md)), serves the MCP, and smoke-tests the repo.
-- **MCP**: `forge mcp` is the MCP server. It gives any agent, or even a regular chatbot, the tools to read skills, agents, and commands, and to scaffold a project. Install the MCP, not the skills, and the agent gets the tools plus the workflow.
+- **MCP**: `forge mcp` is the MCP server. It gives any agent, or even a regular chatbot, the tools to read skills and commands, and to scaffold a project. Install the MCP, not the skills, and the agent gets the tools plus the workflow.
 
 The full workflow, with the goal-to-ship phases in detail, is in [WORKFLOW.md](WORKFLOW.md). The harness plugins are in [docs/INTEGRATION.md](docs/INTEGRATION.md).
 

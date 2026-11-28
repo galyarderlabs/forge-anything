@@ -15,7 +15,45 @@ The framework ships native plugins for these harnesses:
 7.  **GitHub Copilot CLI**: Native plugin (portable root `plugin.json`).
 8.  **Hermes Agent**: Local-first autonomous assistant runtime. Hermes is our own agent, always a target.
 
+## Feature matrix
+
+Every harness gets every feature: skills, agents, commands, hooks, CLI
+access, and MCP. Where a vendor has no native form for a feature, the table
+says what the equivalent is, and where there is no equivalent it says so.
+Nothing is silently missing.
+
+| Feature | Claude Code | OMP / Pi | Codex | Cursor | Antigravity | OpenCode | Copilot CLI | Hermes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Skills | manifest | extension + package.json | manifest | manifest | manifest path | plugin config | spec discovery | native loader |
+| Agents | `.claude/agents/` via manifest | `.pi/agents/` files | `.codex/agents/*.toml` | `.cursor/agents/` via manifest | workspace `.agents/agents/` only | `.opencode/agents/` + config injection | `.github/agents/` project files | via commands + soul files |
+| Commands | `commands/*.md` | extension `registerCommand` | via MCP + skills (no slash system) | `.cursor/commands/` | `commands/*.toml` | `.opencode/commands/` | extension `joinSession` | `ctx.register_command` |
+| Hooks | `hooks/hooks.json` | extension lifecycle | not wired (needs operator login) | `hooks/hooks-cursor.json` | root `hooks.json` | message transform (per-message bootstrap) | `.github/hooks/` | `pre_llm_call` |
+| MCP | `.mcp.json` | root `mcp.json` | inline in plugin | `mcp.json` via manifest | `mcp_config.json` | `opencode.json` | root `mcp.json` (spec) | n/a, native plugin |
+| CLI | `forge` on PATH (install.sh) | same | same | same | same | same | same | same |
+
+Gaps, stated plainly: Codex hooks are not wired (no Codex credentials on
+this machine; needs the operator's login and a canary run). Antigravity
+agents ship at workspace scope only (`.agents/agents/` in scaffolded
+projects): the plugin manifest has no agents path field, and the only
+plugin-root agents dir collides with the agent folders. Pi has no
+`registerAgent` in its extension API, so Pi agents are files
+(`.pi/agents/`, plus `.claude/agents/` as a fallback for third-party
+subagent extensions); a subagent runtime needs a third-party extension.
+Hermes has no agent registration API, so its agents run through the
+commands and the soul files. Copilot plugin-scope agents are unverified
+(the SDK shape is not confirmed), so Copilot agents ship as project files.
+
 ## Install
+
+The MCP server in every harness calls the `forge` CLI (bare `forge` on
+PATH), so install it first. Without it the MCP configs fail and the
+commands that shell out to `forge` do nothing.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/galyarderlabs/forge-anything/main/install.sh | sh
+```
+
+Then install the plugin for your harness.
 
 ### Claude Code
 
@@ -24,7 +62,9 @@ The framework ships native plugins for these harnesses:
 /plugin install forge-anything@forge-anything-marketplace
 ```
 
-Delivers the skills, commands, and the Forge Anything MCP server (`forge mcp`).
+Delivers the skills, the agents (`.claude/agents/`, listed explicitly in
+the plugin manifest), the commands, and the Forge Anything MCP server
+(`forge mcp`).
 
 ### OMP / Pi
 
@@ -41,7 +81,8 @@ omp plugin marketplace add galyarderlabs/forge-anything
 omp plugin install forge-anything@forge-anything-marketplace
 ```
 
-Delivers the skills and the Pi/OMP extension (`.pi/extensions/forge-anything.ts`), which injects the `using-forge-anything` bootstrap at session start and registers every Forge command as a native Pi slash command. OMP also auto-inherits skills installed for Claude Code and other harnesses.
+Delivers the skills, the agents (`.pi/agents/` project files), and the
+Pi/OMP extension (`.pi/extensions/forge-anything.ts`), which injects the `using-forge-anything` bootstrap at session start and registers every Forge command as a native Pi slash command. OMP also auto-inherits skills installed for Claude Code and other harnesses.
 
 ### Codex
 
@@ -50,7 +91,8 @@ codex plugin marketplace add galyarderlabs/forge-anything
 codex plugin add forge-anything@forge-anything
 ```
 
-Delivers the skills (Codex reads the root `skills/` directly) and the Forge Anything MCP server (`forge mcp`). Codex has no slash-command system (custom prompts are deprecated and local-only), so Forge commands reach Codex through the MCP (`read_command`) and the skills, not as `/commands`.
+Delivers the skills (Codex reads the root `skills/` directly), the agents
+(`.codex/agents/*.toml`), and the Forge Anything MCP server (`forge mcp`). Codex has no slash-command system (custom prompts are deprecated and local-only), so Forge commands reach Codex through the MCP (`read_command`) and the skills, not as `/commands`.
 
 ### Cursor
 
@@ -60,7 +102,7 @@ In Cursor Agent chat:
 /add-plugin forge-anything
 ```
 
-Or search for "forge-anything" in the plugin marketplace. Delivers the skills, the commands (`.cursor/commands/*.md`), and the MCP server.
+Or search for "forge-anything" in the plugin marketplace. Delivers the skills, the agents (`.cursor/agents/`, wired through `.cursor-plugin/plugin.json`), the commands (`.cursor/commands/*.md`), and the MCP server.
 
 ### Antigravity
 
@@ -68,7 +110,7 @@ Or search for "forge-anything" in the plugin marketplace. Delivers the skills, t
 agy plugin install https://github.com/galyarderlabs/forge-anything
 ```
 
-Delivers the skills, the commands (`commands/*.toml`), and the MCP server.
+Delivers the skills, the commands (`commands/*.toml`), and the MCP server. Agents ship at workspace scope only (`.agents/agents/` in scaffolded projects): the Antigravity plugin manifest has no agents path field, and the only plugin-root agents dir collides with the agent folders, so there is no plugin-scope agent form.
 
 ### OpenCode
 
@@ -80,7 +122,7 @@ Add forge-anything to the `plugin` array in your `opencode.json` (global or proj
 }
 ```
 
-Restart OpenCode. The plugin auto-installs and registers all skills and the MCP server, and the commands live in `.opencode/commands/*.md`. Full instructions: `.opencode/INSTALL.md`.
+Restart OpenCode. The plugin auto-installs and registers all skills, all agents (as native subagents through `config.agents`, rendered from `.opencode/agents/*.md`), and the MCP server, and the commands live in `.opencode/commands/*.md`. Full instructions: `.opencode/INSTALL.md`.
 
 ### GitHub Copilot CLI
 
@@ -89,7 +131,7 @@ copilot plugin marketplace add galyarderlabs/forge-anything
 copilot plugin install forge-anything@forge-anything-marketplace
 ```
 
-Delivers the skills, the commands (`.github/extensions/forge-anything/extension.mjs`), and the MCP server.
+Delivers the skills, the agents (`.github/agents/` project files), the commands (`.github/extensions/forge-anything/extension.mjs`), and the MCP server.
 
 ### Hermes Agent
 
@@ -99,7 +141,7 @@ Install Forge Anything as a Hermes plugin from this repository:
 hermes plugins install galyarderlabs/forge-anything --enable
 ```
 
-Restart any active Hermes sessions after installing. The plugin registers the skills with Hermes' native skill loader, registers every Forge command as a native Hermes slash command, and injects the `using-forge-anything` bootstrap on the first turn via the `pre_llm_call` hook. Note: Hermes has no post-compaction hook, so a very long session that compacts over its first turn loses the bootstrap - start a fresh session if skills stop triggering.
+Restart any active Hermes sessions after installing. The plugin registers the skills with Hermes' native skill loader, registers every Forge command as a native Hermes slash command, and injects the `using-forge-anything` bootstrap on the first turn via the `pre_llm_call` hook. Hermes has no agent registration API, so the agents run through the commands and the soul files, not as registered agents. Note: Hermes has no post-compaction hook, so a very long session that compacts over its first turn loses the bootstrap - start a fresh session if skills stop triggering.
 
 ## Skills only (no harness plugin)
 
@@ -136,17 +178,55 @@ The repository is organized into 17 departments. Skills and agents live flat so 
 
 The renders rewrite one line: the trailing `**Note**` that names a `forge-anything:` agent or skill becomes a plain instruction to read the agent soul or skill file, because other harnesses have no plugin dispatch. Everything else in the body is copied unchanged.
 
+## Agent delivery
+
+Agents start from one source, `agents/<slug>/SOUL.md`, and `scripts/sync-agents.py` renders every harness's native form from it (`--check` in CI keeps the renders in sync). The body of every render is the soul verbatim: the soul is the system prompt. The description is the soul's identity line, the last paragraph of `## Vision`, which always carries a `Use when` trigger; a soul without it fails the render instead of shipping a description that does not say when to delegate. The skills roster comes from the trailing `Skills:` line; the six coordinators with no skills get no skills field in the Claude render.
+
+- **Claude Code:** `.claude/agents/<slug>.md`, frontmatter name/description/skills. The manifest lists all 54 explicitly under the `agents` key, which replaces the `agents/` scan.
+- **Pi / OMP:** `.pi/agents/<slug>.md` project files. Pi's extension API has no `registerAgent`, so files are the form; `.claude/agents/` is also read by third-party subagent extensions as a fallback. A subagent runtime needs a third-party extension.
+- **OpenCode:** `.opencode/agents/<slug>.md`, frontmatter description plus `mode: subagent`. The plugin also injects them at runtime as `config.agents`, so they are native subagents without reading files.
+- **Cursor:** `.cursor/agents/<slug>.md` project subagents, wired through `.cursor-plugin/plugin.json` (explicit paths replace folder discovery).
+- **Antigravity:** `.agents/agents/<slug>.md` workspace agents, seeded by the scaffold. The plugin manifest has no agents path field, and the only plugin-root agents dir collides with the agent folders, so there is no plugin-scope agent form.
+- **Copilot CLI:** `.github/agents/<slug>.agent.md` project agents. Plugin-scope agents through the extension SDK are unverified, so they are not shipped.
+- **Hermes:** no render. Hermes has no agent registration API, so its agents run through the commands and the soul files.
+- **Codex:** `.codex/agents/<slug>.toml`, with the soul as `developer_instructions`.
+
+## MCP server
+
+One server, declared everywhere in the same shape: the `forge` CLI over stdio, local only, no network, command `forge`, args `["mcp"]`. `scripts/sync-agents.py` owns the declarations and `--check` verifies the ones that live elsewhere name the same server.
+
+- **Claude Code:** `.mcp.json` at the plugin root (the manifest pointed at it before the file existed; that dangling reference is fixed now).
+- **OMP / Pi:** `mcp.json` at the repo root, Agent Plugins 1.0.0 schema.
+- **Cursor:** `mcp.json` through `.cursor-plugin/plugin.json`, plus `.cursor/mcp.json` in scaffolded projects.
+- **Antigravity:** `.antigravity-plugin/mcp_config.json`.
+- **OpenCode:** the `mcp` block in `.opencode/opencode.json`.
+- **Codex:** inline `mcpServers` in `.codex-plugin/plugin.json`, plus `.codex/config.toml` in scaffolded projects.
+- **Copilot CLI:** root `mcp.json` under the Agent Plugins 1.0.0 schema.
+- **Hermes:** n/a, native plugin.
+
+Scaffolded projects get the project configs (`.mcp.json`, `mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`, `.opencode/opencode.json`) so the MCP works in every harness that reads project config. All of them call bare `forge`, so the CLI prerequisite at the top of Install applies to projects too.
+
 ```text
 Silo/
 ├── agents/             # Specialized Agents
 ├── skills/             # Strategic SOPs + Aesthetic Design
 ├── commands/           # Slash commands: *.md source, *.toml Antigravity renders, rendered.json
+├── .claude/agents/     # Claude Code agents (manifest lists them explicitly)
+├── .cursor/agents/     # Cursor project subagents
+├── .opencode/agents/   # OpenCode agents (mode: subagent)
+├── .codex/agents/      # Codex agents (*.toml)
+├── .pi/agents/         # Pi / OMP project agents
+├── .github/agents/     # Copilot CLI project agents
+├── .agents/agents/     # Antigravity workspace agents
 ├── .opencode/commands/ # OpenCode command files
 ├── .cursor/commands/   # Cursor command files
 ├── .github/extensions/ # Copilot CLI slash-command extension
+├── .mcp.json           # Claude Code MCP server
+├── mcp.json            # Agent Plugins 1.0.0 MCP server (OMP, Cursor, Copilot)
 ├── plugin.json         # Portable plugin manifest (Claude Code, Codex, Cursor, Copilot CLI)
 ├── .claude-plugin/     # Claude Code manifest
 ├── .codex-plugin/      # Codex manifest
+├── .cursor-plugin/     # Cursor manifest
 ├── .antigravity-plugin/ # Antigravity manifest
 ├── .hermes-plugin/     # Hermes manifest
 └── .pi/                # Pi/OMP extension

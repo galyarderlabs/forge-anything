@@ -8,17 +8,22 @@
 //!   `.toml` renders and `rendered.json`)
 //! - `.opencode/commands/` and `.cursor/commands/` - the same commands in
 //!   each harness's native file form
+//! - `.claude/agents/`, `.cursor/agents/`, `.opencode/agents/`,
+//!   `.codex/agents/`, `.pi/agents/`, `.github/agents/`, `.agents/agents/`
+//!   - the curated agents in each harness's native form
+//! - `.mcp.json`, `mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`,
+//!   `.opencode/opencode.json` - the project MCP configs, so the `forge`
+//!   MCP server works in every harness that reads project config
 //! - `.github/extensions/forge-anything/extension.mjs` - the Copilot CLI
 //!   slash-command extension
 //! - `docs/` - specs, plans, reports, templates, design, and the 17
 //!   departments with a README and an audit template each
 //!
-//! Skills and agents stay host-agnostic: any agent or host reads `skills/`
-//! and `agents/` straight from the project folder. Commands are the one
-//! exception: each harness has its own native command form, so the scaffold
-//! seeds every form. The full `integrations/` tree stays in the Forge
-//! Anything repo itself; the scaffold ships only what a new project needs
-//! to work.
+//! Skills stay host-agnostic: any agent or host reads `skills/` straight
+//! from the project folder. Commands and agents are the exception: each
+//! harness has its own native form for them, so the scaffold seeds every
+//! form. The full `integrations/` tree stays in the Forge Anything repo
+//! itself; the scaffold ships only what a new project needs to work.
 
 use crate::curated;
 use std::fs;
@@ -184,6 +189,85 @@ pub fn scaffold(
         )?;
     }
 
+    // --- Per-harness agent copies ---------------------------------------
+    // Agents ship in every harness's native form, the same way commands do.
+    // The sources are the renders in this repo (scripts/sync-agents.py);
+    // the scaffold seeds the curated agents only, matching agents/ itself.
+    // A source without the renders still scaffolds; CI's sync-agents
+    // --check is what guarantees the renders exist in the Forge Anything
+    // repo.
+    for agent in curated::CURATED_AGENTS {
+        for (src_dir, dst_dir, file_name) in [
+            (
+                source.join(".claude").join("agents"),
+                target.join(".claude").join("agents"),
+                format!("{agent}.md"),
+            ),
+            (
+                source.join(".cursor").join("agents"),
+                target.join(".cursor").join("agents"),
+                format!("{agent}.md"),
+            ),
+            (
+                source.join(".opencode").join("agents"),
+                target.join(".opencode").join("agents"),
+                format!("{agent}.md"),
+            ),
+            (
+                source.join(".codex").join("agents"),
+                target.join(".codex").join("agents"),
+                format!("{agent}.toml"),
+            ),
+            (
+                source.join(".pi").join("agents"),
+                target.join(".pi").join("agents"),
+                format!("{agent}.md"),
+            ),
+            (
+                source.join(".github").join("agents"),
+                target.join(".github").join("agents"),
+                format!("{agent}.agent.md"),
+            ),
+            (
+                source.join(".agents").join("agents"),
+                target.join(".agents").join("agents"),
+                format!("{agent}.md"),
+            ),
+        ] {
+            let src_file = src_dir.join(&file_name);
+            if src_file.is_file() {
+                copy_file(src_file, dst_dir.join(&file_name), &mut s)?;
+            }
+        }
+    }
+
+    // --- Project MCP configs --------------------------------------------
+    // The `forge` MCP server, in every harness's project config form, so a
+    // new project gets the MCP in Claude Code, OMP, Cursor, Codex, and
+    // OpenCode without installing anything else first. The CLI itself is
+    // still a prerequisite: these configs call bare `forge`, so the
+    // operator runs install.sh before the server can start.
+    for (src_file, dst_file) in [
+        (source.join(".mcp.json"), target.join(".mcp.json")),
+        (source.join("mcp.json"), target.join("mcp.json")),
+        (
+            source.join(".cursor").join("mcp.json"),
+            target.join(".cursor").join("mcp.json"),
+        ),
+        (
+            source.join(".codex").join("config.toml"),
+            target.join(".codex").join("config.toml"),
+        ),
+        (
+            source.join(".opencode").join("opencode.json"),
+            target.join(".opencode").join("opencode.json"),
+        ),
+    ] {
+        if src_file.is_file() {
+            copy_file(src_file, dst_file, &mut s)?;
+        }
+    }
+
     // --- Docs structure --------------------------------------------------
     for d in ["specs", "plans", "reports", "templates", "design"] {
         fs::create_dir_all(target.join("docs").join(d))
@@ -250,6 +334,15 @@ fn readme(project_name: &str) -> String {
          `.opencode/commands/` (OpenCode), `.cursor/commands/` (Cursor),\n\
          `.github/extensions/forge-anything/` (Copilot CLI), and\n\
          `commands/rendered.json` (Pi, Hermes, Copilot CLI at runtime).\n\
+         - `agents/` in every harness's native form too: `.claude/agents/`,\n\
+         `.cursor/agents/`, `.opencode/agents/`, `.codex/agents/`,\n\
+         `.pi/agents/`, `.github/agents/`, `.agents/agents/` (Antigravity\n\
+         workspace scope), so any harness can delegate to the agents\n\
+         directly instead of only through commands.\n\
+         - `.mcp.json`, `mcp.json`, `.cursor/mcp.json`,\n\
+         `.codex/config.toml`, `.opencode/opencode.json` - the `forge` MCP\n\
+         server in each harness's project config form. These call bare\n\
+         `forge`, so run the Forge Anything `install.sh` first.\n\
          - `docs/` - specs, plans, reports, templates, design, and\n\
          `docs/departments/` (one folder per department, with its audit\n\
          template).\n\
@@ -257,8 +350,9 @@ fn readme(project_name: &str) -> String {
          - `skills.json` - the manifest of the skills in this repo.\n\
          \n\
          Any agent or host reads `skills/` and `agents/` straight from this\n\
-         folder. Commands ship in each harness's native form; the renders\n\
-         come from `scripts/sync-commands.py` in the Forge Anything repo.\n\
+         folder. Commands and agents ship in each harness's native form; the\n\
+         renders come from `scripts/sync-commands.py` and\n\
+         `scripts/sync-agents.py` in the Forge Anything repo.\n\
          \n\
          ## Working here\n\
          \n\

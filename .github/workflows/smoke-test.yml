@@ -25,3 +25,6 @@ jobs:
 
       - name: Check command renders are in sync
         run: python3 scripts/sync-commands.py --check
+
+      - name: Check agent renders are in sync
+        run: python3 scripts/sync-agents.py --check

@@ -473,8 +473,26 @@ fn scaffold_through_cli_produces_a_ready_repo() {
             .join(".github/extensions/forge-anything/extension.mjs")
             .is_file()
     );
-    // No plugin manifests in the scaffolded repo (commands ship per
-    // harness; the manifests stay in the Forge Anything repo).
+    // Curated agents in every harness's native form.
+    assert_eq!(count_ext(&target.join(".claude/agents"), "md"), 17);
+    assert_eq!(count_ext(&target.join(".cursor/agents"), "md"), 17);
+    assert_eq!(count_ext(&target.join(".opencode/agents"), "md"), 17);
+    assert_eq!(count_ext(&target.join(".codex/agents"), "toml"), 17);
+    assert_eq!(count_ext(&target.join(".pi/agents"), "md"), 17);
+    assert_eq!(
+        fs::read_dir(target.join(".github/agents")).unwrap().count(),
+        17
+    );
+    assert_eq!(count_ext(&target.join(".agents/agents"), "md"), 17);
+    // Project MCP configs for every harness that reads them.
+    assert!(target.join(".mcp.json").is_file());
+    assert!(target.join("mcp.json").is_file());
+    assert!(target.join(".cursor/mcp.json").is_file());
+    assert!(target.join(".codex/config.toml").is_file());
+    assert!(target.join(".opencode/opencode.json").is_file());
+    // No plugin manifests in the scaffolded repo (commands and agents ship
+    // per harness; the manifests stay in the Forge Anything repo). The
+    // project MCP configs above are not plugin manifests.
     assert!(!target.join(".claude-plugin").exists());
     assert!(!target.join("gemini-extension.json").exists());
     let _ = fs::remove_dir_all(&tmp);

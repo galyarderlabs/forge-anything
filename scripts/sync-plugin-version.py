@@ -34,6 +34,7 @@ JSON_MANIFESTS = [
     REPO_ROOT / ".claude-plugin" / "plugin.json",
     REPO_ROOT / ".codex-plugin" / "plugin.json",
     REPO_ROOT / ".antigravity-plugin" / "plugin.json",
+    REPO_ROOT / ".cursor-plugin" / "plugin.json",
     REPO_ROOT / ".claude-plugin" / "marketplace.json",
 ]
 

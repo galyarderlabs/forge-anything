@@ -77,14 +77,30 @@ jobs:
           test "$(ls "$OUT/.opencode/commands"/*.md | wc -l)" -eq 29
           test "$(ls "$OUT/.cursor/commands"/*.md | wc -l)" -eq 29
           test -f "$OUT/.github/extensions/forge-anything/extension.mjs"
+          # Curated agents in every harness's native form.
+          test "$(ls "$OUT/.claude/agents"/*.md | wc -l)" -eq 17
+          test "$(ls "$OUT/.cursor/agents"/*.md | wc -l)" -eq 17
+          test "$(ls "$OUT/.opencode/agents"/*.md | wc -l)" -eq 17
+          test "$(ls "$OUT/.codex/agents"/*.toml | wc -l)" -eq 17
+          test "$(ls "$OUT/.pi/agents"/*.md | wc -l)" -eq 17
+          test "$(ls "$OUT/.github/agents"/*.agent.md | wc -l)" -eq 17
+          test "$(ls "$OUT/.agents/agents"/*.md | wc -l)" -eq 17
+          # Project MCP configs for every harness that reads them.
+          test -f "$OUT/.mcp.json"
+          test -f "$OUT/mcp.json"
+          test -f "$OUT/.cursor/mcp.json"
+          test -f "$OUT/.codex/config.toml"
+          test -f "$OUT/.opencode/opencode.json"
           test -f "$OUT/README.md"
           test -f "$OUT/AGENTS.md"
           test -f "$OUT/WORKFLOW.md"
           test -f "$OUT/skills.json"
           test -f "$OUT/skills/using-forge-anything/SKILL.md"
           test -f "$OUT/agents/forge-ceo/SOUL.md"
-          # No plugin manifests in the scaffolded repo (commands ship per
-          # harness; the manifests stay in the Forge Anything repo).
+          # No plugin manifests in the scaffolded repo (commands and agents
+          # ship per harness; the manifests stay in the Forge Anything
+          # repo). The project MCP configs above are not plugin manifests:
+          # they are the project's own server configs.
           test ! -e "$OUT/.claude-plugin"
           test -f "$OUT/docs/departments/Executive/README.md"
           test -f "$OUT/docs/departments/Knowledge/README.md"
@@ -133,6 +149,20 @@ jobs:
           test "$(ls /tmp/forge-cli-proof/.opencode/commands/*.md | wc -l)" -eq 29
           test "$(ls /tmp/forge-cli-proof/.cursor/commands/*.md | wc -l)" -eq 29
           test -f /tmp/forge-cli-proof/.github/extensions/forge-anything/extension.mjs
+          # Curated agents in every harness's native form.
+          test "$(ls /tmp/forge-cli-proof/.claude/agents/*.md | wc -l)" -eq 17
+          test "$(ls /tmp/forge-cli-proof/.cursor/agents/*.md | wc -l)" -eq 17
+          test "$(ls /tmp/forge-cli-proof/.opencode/agents/*.md | wc -l)" -eq 17
+          test "$(ls /tmp/forge-cli-proof/.codex/agents/*.toml | wc -l)" -eq 17
+          test "$(ls /tmp/forge-cli-proof/.pi/agents/*.md | wc -l)" -eq 17
+          test "$(ls /tmp/forge-cli-proof/.github/agents/*.agent.md | wc -l)" -eq 17
+          test "$(ls /tmp/forge-cli-proof/.agents/agents/*.md | wc -l)" -eq 17
+          # Project MCP configs for every harness that reads them.
+          test -f /tmp/forge-cli-proof/.mcp.json
+          test -f /tmp/forge-cli-proof/mcp.json
+          test -f /tmp/forge-cli-proof/.cursor/mcp.json
+          test -f /tmp/forge-cli-proof/.codex/config.toml
+          test -f /tmp/forge-cli-proof/.opencode/opencode.json
           test -f /tmp/forge-cli-proof/README.md
           echo "forge scaffold: OK"
 

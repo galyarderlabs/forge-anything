@@ -60,6 +60,7 @@ done
 tests=(
     "test-plugin-loading.sh"
     "test-bootstrap-transform.sh"
+    "test-plugin-agents.sh"
 )
 
 # Integration tests (require OpenCode)

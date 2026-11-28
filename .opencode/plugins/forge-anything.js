@@ -70,6 +70,30 @@ ${toolMapping}
 </EXTREMELY_IMPORTANT>`;
   };
 
+  const getAgents = () => {
+    // Agents ship as .opencode/agents/*.md, rendered from agents/*/SOUL.md
+    // by scripts/sync-agents.py. The plugin injects them as config.agents
+    // so OpenCode can delegate to them natively, the same way Claude Code
+    // reads .claude/agents/ through its plugin manifest.
+    const agentsDir = path.join(repoRoot, '.opencode', 'agents');
+    if (!fs.existsSync(agentsDir)) return {};
+    const agents = {};
+    for (const file of fs.readdirSync(agentsDir).sort()) {
+      if (!file.endsWith('.md')) continue;
+      const slug = file.slice(0, -3);
+      const { frontmatter, content } = extractAndStripFrontmatter(
+        fs.readFileSync(path.join(agentsDir, file), 'utf8')
+      );
+      if (!frontmatter.description || frontmatter.mode !== 'subagent') continue;
+      agents[slug] = {
+        description: frontmatter.description,
+        mode: 'subagent',
+        prompt: content.trim(),
+      };
+    }
+    return agents;
+  };
+
   return {
     config: async (config) => {
       config.skills = config.skills || {};
@@ -82,6 +106,10 @@ ${toolMapping}
           config.skills.paths.push(siloSkillsPath);
         }
       });
+
+      // Inject the agents as native OpenCode subagents.
+      config.agents = config.agents || {};
+      Object.assign(config.agents, getAgents());
     },
 
     'experimental.chat.messages.transform': async (_input, output) => {
