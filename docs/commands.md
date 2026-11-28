@@ -200,14 +200,6 @@ Plan it, build it, check it against evidence, ship it. This is the inner loop, a
 - **Most valuable:** fast validation with the tradeoff stated upfront.
 - **Expected output:** an experiment that validates or kills the idea, not stable code.
 
-### [/incident](../commands/incident.md)
-
-- **When:** an incident needs handling now.
-- **Agent:** none named in the file. The file overrides standard planning gates but still enforces strict TDD and context validation.
-- **Example:** `/incident the gateway is down`
-- **Most valuable:** speed without dropping the test discipline.
-- **Expected output:** the incident fixed with TDD still enforced.
-
 ## Earn
 
 The shipped work is priced, sold, and collected.
