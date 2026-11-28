@@ -123,13 +123,13 @@ This validates the package (`COMPANY.md` with `agentcompanies/v1` frontmatter) a
 
 ## Command Silo Structure (Universal Architecture)
 
-The repository is organized into 17 departments. All assets are mapped to a flat structure that every supported harness can read:
+The repository is organized into 17 departments. Skills and agents live flat so every supported harness can read them. Commands are the exception: they are Claude Code slash commands (`.md`), wired only through `.claude-plugin/plugin.json`; the other harnesses get the skills and the MCP server, not the commands.
 
 ```text
 Silo/
 ├── agents/             # Specialized Agents
 ├── skills/             # Strategic SOPs + Aesthetic Design
-├── commands/           # Rapid orchestration triggers
+├── commands/           # Slash commands (Claude Code only)
 ├── plugin.json         # Portable plugin manifest (Claude Code, Codex, Cursor, Copilot CLI)
 ├── .claude-plugin/     # Claude Code manifest
 ├── .codex-plugin/      # Codex manifest
