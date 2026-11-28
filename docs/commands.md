@@ -4,6 +4,21 @@ A command is the operator's one-line entry point. You type it, the work starts. 
 
 The commands below follow the workflow: Ideas, Goal, Ship, Earn, Give back, with plan, build, verify as the inner loop of Ship. One command, `/log`, serves every stage, so it has its own section at the end.
 
+## Commands on every harness
+
+The source is `commands/*.md` (the Claude Code format). `scripts/sync-commands.py` renders every harness's native form from it, and `--check` in CI keeps the renders in sync. The same 29 commands work everywhere:
+
+- **Claude Code:** `commands/*.md` via `.claude-plugin/plugin.json`.
+- **Pi / OMP:** the extension registers each command with `registerCommand`.
+- **OpenCode:** `.opencode/commands/*.md`.
+- **Cursor:** `.cursor/commands/*.md`.
+- **Antigravity:** `commands/*.toml`.
+- **Copilot CLI:** `.github/extensions/forge-anything/extension.mjs`.
+- **Hermes:** the plugin registers each command with `ctx.register_command`.
+- **Codex:** no slash commands exist there (custom prompts are deprecated and local-only). Commands reach Codex through the MCP (`read_command`) and the skills.
+
+The renders rewrite one line: the trailing `**Note**` that names a `forge-anything:` agent or skill becomes a plain instruction to read the agent soul or skill file. Everything else is copied unchanged. The scaffold seeds every form into new projects.
+
 ## Ideas
 
 A spark becomes something worth building. Most of Ideas is a conversation, not a typed job. The one command here grounds the idea in evidence before anything is planned.

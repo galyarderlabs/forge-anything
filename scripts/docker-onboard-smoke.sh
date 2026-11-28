@@ -164,7 +164,12 @@ say "[4/4] forge scaffold"
 "\$BIN" scaffold --source "\$SRC" --name smoke-test "\$PROJ" | tail -2
 test "\$(ls "\$PROJ/skills" | wc -l)" -eq 32
 test "\$(ls "\$PROJ/agents" | wc -l)" -eq 17
-test "\$(ls "\$PROJ/commands" | wc -l)" -eq 29
+test "\$(ls "\$PROJ/commands"/*.md | wc -l)" -eq 29
+test "\$(ls "\$PROJ/commands"/*.toml | wc -l)" -eq 29
+test -f "\$PROJ/commands/rendered.json"
+test "\$(ls "\$PROJ/.opencode/commands"/*.md | wc -l)" -eq 29
+test "\$(ls "\$PROJ/.cursor/commands"/*.md | wc -l)" -eq 29
+test -f "\$PROJ/.github/extensions/forge-anything/extension.mjs"
 test -f "\$PROJ/README.md"
 test -f "\$PROJ/skills/using-forge-anything/SKILL.md"
 test -f "\$PROJ/agents/forge-ceo/SOUL.md"

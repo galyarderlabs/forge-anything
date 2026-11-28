@@ -444,10 +444,38 @@ fn scaffold_through_cli_produces_a_ready_repo() {
     );
     assert_eq!(fs::read_dir(target.join("skills")).unwrap().count(), 32);
     assert_eq!(fs::read_dir(target.join("agents")).unwrap().count(), 17);
-    assert_eq!(fs::read_dir(target.join("commands")).unwrap().count(), 29);
-    // No per-host copies or manifests in the scaffolded repo.
+    let count_ext = |dir: &Path, ext: &str| {
+        fs::read_dir(dir)
+            .unwrap()
+            .filter(|e| {
+                e.as_ref()
+                    .is_ok_and(|e| e.path().extension().is_some_and(|x| x == ext))
+            })
+            .count()
+    };
+    assert_eq!(count_ext(&target.join("commands"), "md"), 29);
+    assert_eq!(count_ext(&target.join("commands"), "toml"), 29);
+    assert!(target.join("commands/rendered.json").is_file());
+    assert_eq!(
+        fs::read_dir(target.join(".opencode/commands"))
+            .unwrap()
+            .count(),
+        29
+    );
+    assert_eq!(
+        fs::read_dir(target.join(".cursor/commands"))
+            .unwrap()
+            .count(),
+        29
+    );
+    assert!(
+        target
+            .join(".github/extensions/forge-anything/extension.mjs")
+            .is_file()
+    );
+    // No plugin manifests in the scaffolded repo (commands ship per
+    // harness; the manifests stay in the Forge Anything repo).
     assert!(!target.join(".claude-plugin").exists());
-    assert!(!target.join(".cursor").exists());
     assert!(!target.join("gemini-extension.json").exists());
     let _ = fs::remove_dir_all(&tmp);
 }

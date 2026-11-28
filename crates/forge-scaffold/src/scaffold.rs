@@ -4,14 +4,21 @@
 //! - `README.md`, `AGENTS.md`, `WORKFLOW.md`, `.gitignore`, `skills.json`
 //! - `skills/<curated>/` - the curated skills, copied whole from the source
 //! - `agents/<curated>/` - the curated agents (SOUL.md + MEMORY.md + README.md)
-//! - `commands/` - all slash commands
+//! - `commands/` - all slash commands (`.md` source plus the Antigravity
+//!   `.toml` renders and `rendered.json`)
+//! - `.opencode/commands/` and `.cursor/commands/` - the same commands in
+//!   each harness's native file form
+//! - `.github/extensions/forge-anything/extension.mjs` - the Copilot CLI
+//!   slash-command extension
 //! - `docs/` - specs, plans, reports, templates, design, and the 17
 //!   departments with a README and an audit template each
 //!
-//! No per-host copies or manifests: any agent or host reads `skills/` and
-//! `agents/` straight from the project folder. The full `integrations/`
-//! tree stays in the Forge Anything repo itself; the scaffold ships only
-//! what a new project needs to work.
+//! Skills and agents stay host-agnostic: any agent or host reads `skills/`
+//! and `agents/` straight from the project folder. Commands are the one
+//! exception: each harness has its own native command form, so the scaffold
+//! seeds every form. The full `integrations/` tree stays in the Forge
+//! Anything repo itself; the scaffold ships only what a new project needs
+//! to work.
 
 use crate::curated;
 use std::fs;
@@ -111,15 +118,70 @@ pub fn scaffold(
     }
 
     // --- All slash commands ---------------------------------------------
+    // The .md files are the Claude Code source; the .toml files are the
+    // Antigravity renders and rendered.json feeds Pi, Hermes, and Copilot
+    // CLI at runtime. All three come from scripts/sync-commands.py.
     let commands_src = source.join("commands");
     let commands_dst = target.join("commands");
     for entry in read_dir_sorted(&commands_src)? {
         let path = entry.path();
-        if path.extension().is_some_and(|e| e == "md") {
+        let is_md = path.extension().is_some_and(|e| e == "md");
+        let is_toml = path.extension().is_some_and(|e| e == "toml");
+        if is_md || is_toml {
             let name = entry.file_name().to_string_lossy().into_owned();
             copy_file(path, commands_dst.join(name), &mut s)?;
-            s.commands += 1;
+            if is_md {
+                s.commands += 1;
+            }
         }
+    }
+    let rendered = commands_src.join("rendered.json");
+    if rendered.is_file() {
+        copy_file(rendered, commands_dst.join("rendered.json"), &mut s)?;
+    }
+
+    // --- Per-harness command copies -------------------------------------
+    // Commands ship in every harness's native form. The sources are the
+    // renders in this repo (scripts/sync-commands.py); the scaffold seeds
+    // them so a new project has working slash commands everywhere. A source
+    // without the renders still scaffolds; CI's sync-commands --check is
+    // what guarantees the renders exist in the Forge Anything repo.
+    for (src_dir, dst_dir) in [
+        (
+            source.join(".opencode").join("commands"),
+            target.join(".opencode").join("commands"),
+        ),
+        (
+            source.join(".cursor").join("commands"),
+            target.join(".cursor").join("commands"),
+        ),
+    ] {
+        if !src_dir.is_dir() {
+            continue;
+        }
+        for entry in read_dir_sorted(&src_dir)? {
+            let path = entry.path();
+            if path.extension().is_some_and(|e| e == "md") {
+                let name = entry.file_name().to_string_lossy().into_owned();
+                copy_file(path, dst_dir.join(name), &mut s)?;
+            }
+        }
+    }
+    let copilot_ext = source
+        .join(".github")
+        .join("extensions")
+        .join("forge-anything")
+        .join("extension.mjs");
+    if copilot_ext.is_file() {
+        copy_file(
+            copilot_ext,
+            target
+                .join(".github")
+                .join("extensions")
+                .join("forge-anything")
+                .join("extension.mjs"),
+            &mut s,
+        )?;
     }
 
     // --- Docs structure --------------------------------------------------
@@ -183,7 +245,11 @@ fn readme(project_name: &str) -> String {
          departments.\n\
          - `agents/` - the Forge agents plus the lead role agent per\n\
          department.\n\
-         - `commands/` - slash commands (`/plan`, `/docs`, `/release`, ...).\n\
+         - `commands/` - slash commands (`/plan`, `/docs`, `/release`, ...),\n\
+         rendered for every harness: `commands/*.toml` (Antigravity),\n\
+         `.opencode/commands/` (OpenCode), `.cursor/commands/` (Cursor),\n\
+         `.github/extensions/forge-anything/` (Copilot CLI), and\n\
+         `commands/rendered.json` (Pi, Hermes, Copilot CLI at runtime).\n\
          - `docs/` - specs, plans, reports, templates, design, and\n\
          `docs/departments/` (one folder per department, with its audit\n\
          template).\n\
@@ -191,7 +257,8 @@ fn readme(project_name: &str) -> String {
          - `skills.json` - the manifest of the skills in this repo.\n\
          \n\
          Any agent or host reads `skills/` and `agents/` straight from this\n\
-         folder; there are no per-host copies or manifests to keep in sync.\n\
+         folder. Commands ship in each harness's native form; the renders\n\
+         come from `scripts/sync-commands.py` in the Forge Anything repo.\n\
          \n\
          ## Working here\n\
          \n\

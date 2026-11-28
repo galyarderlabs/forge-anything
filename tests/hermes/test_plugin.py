@@ -194,3 +194,63 @@ class TestSkillDescriptions:
     def test_frontmatter_value_parsing(self, block, expected):
         plugin = _load_plugin()
         assert plugin._frontmatter_value(block, "description") == expected
+
+
+class TestCommandRegistration:
+    """Every command in commands/rendered.json becomes a native hermes
+    slash command via ctx.register_command."""
+
+    def test_register_registers_every_command(self, mock_ctx):
+        plugin = _load_plugin()
+        plugin.register(mock_ctx)
+        rendered = Path(plugin._commands_file())
+        expected = {
+            entry["name"]: entry["description"]
+            for entry in __import__("json").loads(rendered.read_text())["commands"]
+        }
+        assert len(mock_ctx._commands) == 29
+        assert set(mock_ctx._commands) == set(expected)
+        for name, (_, description) in mock_ctx._commands.items():
+            assert description == expected[name], f"/{name} description drift"
+
+    def test_command_handler_injects_body_and_args(self, mock_ctx):
+        plugin = _load_plugin()
+        plugin.register(mock_ctx)
+        handler, _ = mock_ctx._commands["research"]
+        result = handler(args="compare RAG vs fine-tuning", session_key="s1")
+        assert len(mock_ctx._injected) == 1
+        injected = mock_ctx._injected[0]
+        assert injected["role"] == "user"
+        assert injected["session_key"] == "s1"
+        assert "Act as the `research` agent" in injected["content"]
+        assert "compare RAG vs fine-tuning" in injected["content"]
+        assert result.startswith("Forge /research")
+
+    def test_command_handler_without_args_injects_body_only(self, mock_ctx):
+        plugin = _load_plugin()
+        plugin.register(mock_ctx)
+        handler, _ = mock_ctx._commands["research"]
+        handler(args="")
+        injected = mock_ctx._injected[0]
+        assert "Act as the `research` agent" in injected["content"]
+        assert "Operator input" not in injected["content"]
+
+    def test_no_commands_when_rendered_json_is_missing(self, tmp_path, mock_ctx):
+        # A checkout without commands/rendered.json (older layout) keeps
+        # working: skills and the bootstrap still register, no commands.
+        plugdir = tmp_path / "forge-anything"
+        plugdir.mkdir(parents=True)
+        shutil.copy(Path(_PLUGIN_DIR) / "__init__.py", plugdir / "__init__.py")
+        spec = importlib.util.spec_from_file_location(
+            "hermes_plugin_no_commands", plugdir / "__init__.py"
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        # Point the module at a skills tree so only the commands are absent.
+        src_skills = Path(_PLUGIN_DIR).parent / "skills"
+        skills = tmp_path / "forge-anything" / "skills"
+        for skill in ("using-forge-anything", "brainstorming"):
+            shutil.copytree(src_skills / skill, skills / skill)
+        mod.register(mock_ctx)
+        assert mock_ctx._commands == {}
+        assert "using-forge-anything" in mock_ctx._skills

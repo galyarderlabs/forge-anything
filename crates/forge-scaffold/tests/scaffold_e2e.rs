@@ -4,8 +4,8 @@
 //! repo checkout as `--source`, and asserts the result is a ready repo:
 //! the structure, the docs, the curated skills + agents and the commands,
 //! with no manual copying afterwards. Any agent or host reads `skills/` and
-//! `agents/` straight from the project folder, so there are no per-host
-//! copies or manifests to assert.
+//! `agents/` straight from the project folder; commands ship in each
+//! harness's native form, so the per-harness copies are asserted too.
 
 use forge_scaffold::curated;
 use std::fs;
@@ -120,11 +120,42 @@ fn scaffold_produces_a_ready_repo() {
         assert_file(&target.join("agents").join(agent).join("SOUL.md"));
     }
 
-    // All slash commands.
-    let commands: Vec<_> = fs::read_dir(target.join("commands"))
-        .expect("read commands")
-        .collect();
-    assert_eq!(commands.len(), 29, "all 29 commands copied");
+    // All slash commands, in every harness's native form.
+    let count_ext = |dir: &Path, ext: &str| {
+        fs::read_dir(dir)
+            .expect("read dir")
+            .filter(|e| {
+                e.as_ref()
+                    .is_ok_and(|e| e.path().extension().is_some_and(|x| x == ext))
+            })
+            .count()
+    };
+    assert_eq!(
+        count_ext(&target.join("commands"), "md"),
+        29,
+        "all 29 commands copied"
+    );
+    assert_eq!(
+        count_ext(&target.join("commands"), "toml"),
+        29,
+        "all 29 Antigravity renders copied"
+    );
+    assert_file(&target.join("commands/rendered.json"));
+    assert_eq!(
+        fs::read_dir(target.join(".opencode/commands"))
+            .expect("read opencode commands")
+            .count(),
+        29,
+        "all 29 OpenCode commands copied"
+    );
+    assert_eq!(
+        fs::read_dir(target.join(".cursor/commands"))
+            .expect("read cursor commands")
+            .count(),
+        29,
+        "all 29 Cursor commands copied"
+    );
+    assert_file(&target.join(".github/extensions/forge-anything/extension.mjs"));
 
     // Docs structure + departments.
     for d in ["specs", "plans", "reports", "templates", "design"] {
@@ -148,14 +179,16 @@ fn scaffold_produces_a_ready_repo() {
         .collect();
     assert!(!design_specs.is_empty(), "design specs seeded");
 
-    // No per-host copies or manifests: skills/ and agents/ are read
-    // straight from the project folder.
+    // No per-host manifests or rules: skills/ and agents/ are read
+    // straight from the project folder. Commands are the exception: their
+    // per-harness copies (.opencode/commands, .cursor/commands,
+    // .github/extensions) are asserted in the commands section above.
     assert!(
         !target.join(".claude-plugin").exists(),
         "no host manifest is scaffolded"
     );
     assert!(
-        !target.join(".cursor").exists(),
+        !target.join(".cursor/rules").exists(),
         "no Cursor rules are scaffolded"
     );
     assert!(

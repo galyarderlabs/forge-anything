@@ -17,14 +17,22 @@ async function readPackageJson() {
 async function loadExtension() {
   const handlers = new Map();
   const pi = {
+    commands: new Map(),
+    sentMessages: [],
     on(event, handler) {
       if (!handlers.has(event)) handlers.set(event, []);
       handlers.get(event).push(handler);
     },
+    registerCommand(name, options) {
+      pi.commands.set(name, options);
+    },
+    async sendUserMessage(content) {
+      pi.sentMessages.push(content);
+    },
   };
   const mod = await import(pathToFileURL(extensionPath).href + `?cachebust=${Date.now()}-${Math.random()}`);
   mod.default(pi);
-  return { handlers };
+  return { handlers, pi };
 }
 
 function firstHandler(handlers, event) {
@@ -154,4 +162,60 @@ test('pi tools reference documents pi-specific mappings', async () => {
   assert.match(source, /## Pi tool mapping/, 'extension documents the Pi tool mapping');
   assert.match(source, /subagent/i, 'mapping documents subagent dispatch');
   assert.match(source, /todo|task/i, 'mapping documents task tracking');
+});
+
+async function readCommandSources() {
+  const { readdir, readFile } = await import('node:fs/promises');
+  const dir = resolve(repoRoot, 'commands');
+  const names = (await readdir(dir)).filter((f) => f.endsWith('.md')).sort();
+  const commands = new Map();
+  for (const file of names) {
+    const text = await readFile(resolve(dir, file), 'utf8');
+    const description = text.match(/^description: (.*)$/m)[1];
+    commands.set(file.replace(/\.md$/, ''), description);
+  }
+  return commands;
+}
+
+test('extension registers every Forge command as a native Pi slash command', async () => {
+  const { pi } = await loadExtension();
+  const sources = await readCommandSources();
+
+  assert.equal(pi.commands.size, sources.size, 'one Pi command per commands/*.md');
+  for (const [name, description] of sources) {
+    assert.ok(pi.commands.has(name), `missing /${name}`);
+    assert.equal(pi.commands.get(name).description, description);
+    assert.equal(typeof pi.commands.get(name).handler, 'function');
+  }
+});
+
+test('a command handler sends the rendered body plus the operator input', async () => {
+  const { pi } = await loadExtension();
+  const research = pi.commands.get('research');
+  const notified = [];
+  const ctx = { ui: { notify: (message) => notified.push(message) } };
+
+  await research.handler('compare RAG vs fine-tuning', ctx);
+  assert.equal(pi.sentMessages.length, 1);
+  assert.match(pi.sentMessages[0], /Act as the `research` agent/);
+  assert.match(pi.sentMessages[0], /compare RAG vs fine-tuning/);
+
+  await research.handler('', ctx);
+  assert.equal(pi.sentMessages.length, 2);
+  assert.match(pi.sentMessages[1], /Act as the `research` agent/);
+  assert.doesNotMatch(pi.sentMessages[1], /Operator input/);
+});
+
+test('a command handler notifies when the message cannot start a turn', async () => {
+  const { pi } = await loadExtension();
+  const research = pi.commands.get('research');
+  const notified = [];
+  const ctx = { ui: { notify: (message) => notified.push(message) } };
+
+  pi.sendUserMessage = async () => {
+    throw new Error('dropped');
+  };
+  await research.handler('x', ctx);
+  assert.equal(notified.length, 1);
+  assert.match(notified[0], /could not start a turn/);
 });

@@ -41,7 +41,7 @@ omp plugin marketplace add galyarderlabs/forge-anything
 omp plugin install forge-anything@forge-anything-marketplace
 ```
 
-Delivers the skills and the Pi/OMP extension (`.pi/extensions/forge-anything.ts`), which injects the `using-forge-anything` bootstrap at session start. OMP also auto-inherits skills installed for Claude Code and other harnesses.
+Delivers the skills and the Pi/OMP extension (`.pi/extensions/forge-anything.ts`), which injects the `using-forge-anything` bootstrap at session start and registers every Forge command as a native Pi slash command. OMP also auto-inherits skills installed for Claude Code and other harnesses.
 
 ### Codex
 
@@ -50,7 +50,7 @@ codex plugin marketplace add galyarderlabs/forge-anything
 codex plugin add forge-anything@forge-anything
 ```
 
-Delivers the skills (Codex reads the root `skills/` directly) and the Forge Anything MCP server (`forge mcp`).
+Delivers the skills (Codex reads the root `skills/` directly) and the Forge Anything MCP server (`forge mcp`). Codex has no slash-command system (custom prompts are deprecated and local-only), so Forge commands reach Codex through the MCP (`read_command`) and the skills, not as `/commands`.
 
 ### Cursor
 
@@ -60,7 +60,7 @@ In Cursor Agent chat:
 /add-plugin forge-anything
 ```
 
-Or search for "forge-anything" in the plugin marketplace. Delivers the skills and the MCP server.
+Or search for "forge-anything" in the plugin marketplace. Delivers the skills, the commands (`.cursor/commands/*.md`), and the MCP server.
 
 ### Antigravity
 
@@ -68,7 +68,7 @@ Or search for "forge-anything" in the plugin marketplace. Delivers the skills an
 agy plugin install https://github.com/galyarderlabs/forge-anything
 ```
 
-Delivers the skills and the MCP server.
+Delivers the skills, the commands (`commands/*.toml`), and the MCP server.
 
 ### OpenCode
 
@@ -80,7 +80,7 @@ Add forge-anything to the `plugin` array in your `opencode.json` (global or proj
 }
 ```
 
-Restart OpenCode. The plugin auto-installs and registers all skills and the MCP server. Full instructions: `.opencode/INSTALL.md`.
+Restart OpenCode. The plugin auto-installs and registers all skills and the MCP server, and the commands live in `.opencode/commands/*.md`. Full instructions: `.opencode/INSTALL.md`.
 
 ### GitHub Copilot CLI
 
@@ -89,7 +89,7 @@ copilot plugin marketplace add galyarderlabs/forge-anything
 copilot plugin install forge-anything@forge-anything-marketplace
 ```
 
-Delivers the skills and the MCP server.
+Delivers the skills, the commands (`.github/extensions/forge-anything/extension.mjs`), and the MCP server.
 
 ### Hermes Agent
 
@@ -99,7 +99,7 @@ Install Forge Anything as a Hermes plugin from this repository:
 hermes plugins install galyarderlabs/forge-anything --enable
 ```
 
-Restart any active Hermes sessions after installing. The plugin registers the skills with Hermes' native skill loader and injects the `using-forge-anything` bootstrap on the first turn via the `pre_llm_call` hook. Note: Hermes has no post-compaction hook, so a very long session that compacts over its first turn loses the bootstrap - start a fresh session if skills stop triggering.
+Restart any active Hermes sessions after installing. The plugin registers the skills with Hermes' native skill loader, registers every Forge command as a native Hermes slash command, and injects the `using-forge-anything` bootstrap on the first turn via the `pre_llm_call` hook. Note: Hermes has no post-compaction hook, so a very long session that compacts over its first turn loses the bootstrap - start a fresh session if skills stop triggering.
 
 ## Skills only (no harness plugin)
 
@@ -123,13 +123,27 @@ This validates the package (`COMPANY.md` with `agentcompanies/v1` frontmatter) a
 
 ## Command Silo Structure (Universal Architecture)
 
-The repository is organized into 17 departments. Skills and agents live flat so every supported harness can read them. Commands are the exception: they are Claude Code slash commands (`.md`), wired only through `.claude-plugin/plugin.json`; the other harnesses get the skills and the MCP server, not the commands.
+The repository is organized into 17 departments. Skills and agents live flat so every supported harness can read them. Commands start from one source, `commands/*.md` (the Claude Code slash-command format), and `scripts/sync-commands.py` renders every harness's native form from it (`--check` in CI keeps the renders in sync). Each harness gets the commands in its own form:
+
+- **Claude Code:** `commands/*.md`, wired through `.claude-plugin/plugin.json`.
+- **Pi / OMP:** `.pi/extensions/forge-anything.ts` reads `commands/rendered.json` and registers each command with `registerCommand`.
+- **OpenCode:** `.opencode/commands/*.md`, frontmatter plus the body as the prompt template.
+- **Cursor:** `.cursor/commands/*.md`, plain prompt files.
+- **Antigravity:** `commands/*.toml`, description plus prompt.
+- **Copilot CLI:** `.github/extensions/forge-anything/extension.mjs` reads `commands/rendered.json` and registers each command with the extension SDK.
+- **Hermes:** `.hermes-plugin/__init__.py` reads `commands/rendered.json` and registers each command with `ctx.register_command`.
+- **Codex:** no render. Codex has no slash-command system (custom prompts are deprecated and local-only), so commands reach Codex through the MCP (`read_command`) and the skills.
+
+The renders rewrite one line: the trailing `**Note**` that names a `forge-anything:` agent or skill becomes a plain instruction to read the agent soul or skill file, because other harnesses have no plugin dispatch. Everything else in the body is copied unchanged.
 
 ```text
 Silo/
 ├── agents/             # Specialized Agents
 ├── skills/             # Strategic SOPs + Aesthetic Design
-├── commands/           # Slash commands (Claude Code only)
+├── commands/           # Slash commands: *.md source, *.toml Antigravity renders, rendered.json
+├── .opencode/commands/ # OpenCode command files
+├── .cursor/commands/   # Cursor command files
+├── .github/extensions/ # Copilot CLI slash-command extension
 ├── plugin.json         # Portable plugin manifest (Claude Code, Codex, Cursor, Copilot CLI)
 ├── .claude-plugin/     # Claude Code manifest
 ├── .codex-plugin/      # Codex manifest

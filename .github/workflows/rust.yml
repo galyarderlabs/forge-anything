@@ -71,16 +71,21 @@ jobs:
           OUT=/tmp/forge-scaffold-proof
           test "$(ls "$OUT/skills" | wc -l)" -eq 32
           test "$(ls "$OUT/agents" | wc -l)" -eq 17
-          test "$(ls "$OUT/commands" | wc -l)" -eq 29
+          test "$(ls "$OUT/commands"/*.md | wc -l)" -eq 29
+          test "$(ls "$OUT/commands"/*.toml | wc -l)" -eq 29
+          test -f "$OUT/commands/rendered.json"
+          test "$(ls "$OUT/.opencode/commands"/*.md | wc -l)" -eq 29
+          test "$(ls "$OUT/.cursor/commands"/*.md | wc -l)" -eq 29
+          test -f "$OUT/.github/extensions/forge-anything/extension.mjs"
           test -f "$OUT/README.md"
           test -f "$OUT/AGENTS.md"
           test -f "$OUT/WORKFLOW.md"
           test -f "$OUT/skills.json"
           test -f "$OUT/skills/using-forge-anything/SKILL.md"
           test -f "$OUT/agents/forge-ceo/SOUL.md"
-          # No per-host copies or manifests in the scaffolded repo.
+          # No plugin manifests in the scaffolded repo (commands ship per
+          # harness; the manifests stay in the Forge Anything repo).
           test ! -e "$OUT/.claude-plugin"
-          test ! -e "$OUT/.cursor"
           test -f "$OUT/docs/departments/Executive/README.md"
           test -f "$OUT/docs/departments/Knowledge/README.md"
           # No old product name anywhere in the scaffolded repo.
@@ -122,7 +127,12 @@ jobs:
           ./crates/forge/target/release/forge scaffold --name ci-proof /tmp/forge-cli-proof
           test "$(ls /tmp/forge-cli-proof/skills | wc -l)" -eq 32
           test "$(ls /tmp/forge-cli-proof/agents | wc -l)" -eq 17
-          test "$(ls /tmp/forge-cli-proof/commands | wc -l)" -eq 29
+          test "$(ls /tmp/forge-cli-proof/commands/*.md | wc -l)" -eq 29
+          test "$(ls /tmp/forge-cli-proof/commands/*.toml | wc -l)" -eq 29
+          test -f /tmp/forge-cli-proof/commands/rendered.json
+          test "$(ls /tmp/forge-cli-proof/.opencode/commands/*.md | wc -l)" -eq 29
+          test "$(ls /tmp/forge-cli-proof/.cursor/commands/*.md | wc -l)" -eq 29
+          test -f /tmp/forge-cli-proof/.github/extensions/forge-anything/extension.mjs
           test -f /tmp/forge-cli-proof/README.md
           echo "forge scaffold: OK"
 
