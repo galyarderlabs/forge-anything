@@ -26,6 +26,8 @@ A skill's "instructions file" is `AGENTS.md` in the project directory, or `~/.he
 
 Use `delegate_task` for parallel or sequential workstreams; if it is unavailable, do the work inline rather than inventing tool calls.
 
+Forge agents: `/agent <slug> <goal>` delegates to that agent via delegate_task, with its SOUL.md + MEMORY.md as the child context.
+
 ## Task tracking
 
 Use the `todo` tool for task tracking (multi-agent boards: `hermes kanban` CLI if available); treat older `TodoWrite` references as the task-tracking action.

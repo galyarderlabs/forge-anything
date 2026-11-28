@@ -175,6 +175,7 @@ test "\$(ls "\$PROJ/.cursor/agents"/*.md | wc -l)" -eq 17
 test "\$(ls "\$PROJ/.opencode/agents"/*.md | wc -l)" -eq 17
 test "\$(ls "\$PROJ/.codex/agents"/*.toml | wc -l)" -eq 17
 test "\$(ls "\$PROJ/.pi/agents"/*.md | wc -l)" -eq 17
+test "\$(ls "\$PROJ/.omp/agents"/*.md | wc -l)" -eq 17
 test "\$(ls "\$PROJ/.github/agents"/*.agent.md | wc -l)" -eq 17
 test "\$(ls "\$PROJ/.agents/agents"/*.md | wc -l)" -eq 17
 test -f "\$PROJ/.mcp.json"
@@ -182,6 +183,8 @@ test -f "\$PROJ/mcp.json"
 test -f "\$PROJ/.cursor/mcp.json"
 test -f "\$PROJ/.codex/config.toml"
 test -f "\$PROJ/.opencode/opencode.json"
+test -f "\$PROJ/.codex/hooks.json"
+test -f "\$PROJ/hooks/session-start"
 test -f "\$PROJ/README.md"
 test -f "\$PROJ/skills/using-forge-anything/SKILL.md"
 test -f "\$PROJ/agents/forge-ceo/SOUL.md"

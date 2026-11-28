@@ -184,6 +184,11 @@ fn scaffold_produces_a_ready_repo() {
         "all 17 curated Pi agents copied"
     );
     assert_eq!(
+        count_ext(&target.join(".omp/agents"), "md"),
+        17,
+        "all 17 curated Pi-core agents copied"
+    );
+    assert_eq!(
         fs::read_dir(target.join(".github/agents"))
             .expect("read copilot agents")
             .count(),
@@ -202,6 +207,10 @@ fn scaffold_produces_a_ready_repo() {
     assert_file(&target.join(".cursor/mcp.json"));
     assert_file(&target.join(".codex/config.toml"));
     assert_file(&target.join(".opencode/opencode.json"));
+
+    // Codex SessionStart hook: the hook file plus the script it calls.
+    assert_file(&target.join(".codex/hooks.json"));
+    assert_file(&target.join("hooks/session-start"));
 
     // Docs structure + departments.
     for d in ["specs", "plans", "reports", "templates", "design"] {
@@ -228,10 +237,11 @@ fn scaffold_produces_a_ready_repo() {
     // No plugin manifests or rules: skills/ and agents/ are read straight
     // from the project folder. Commands and agents are the exception: their
     // per-harness copies (.opencode/commands, .cursor/commands,
-    // .github/extensions, and the seven agent dirs) are asserted in the
+    // .github/extensions, and the eight agent dirs) are asserted in the
     // sections above, and so are the project MCP configs (.mcp.json,
     // mcp.json, .cursor/mcp.json, .codex/config.toml,
-    // .opencode/opencode.json). Those configs are project config, not
+    // .opencode/opencode.json) and the Codex hook (.codex/hooks.json plus
+    // hooks/session-start). Those configs are project config, not
     // plugin manifests: the manifests themselves stay in the Forge
     // Anything repo.
     assert!(

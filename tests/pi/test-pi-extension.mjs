@@ -177,16 +177,18 @@ async function readCommandSources() {
   return commands;
 }
 
-test('extension registers every Forge command as a native Pi slash command', async () => {
+test('extension registers every Forge command as a native Pi slash command, plus /agent', async () => {
   const { pi } = await loadExtension();
   const sources = await readCommandSources();
 
-  assert.equal(pi.commands.size, sources.size, 'one Pi command per commands/*.md');
+  assert.equal(pi.commands.size, sources.size + 1, 'one Pi command per commands/*.md, plus /agent');
   for (const [name, description] of sources) {
     assert.ok(pi.commands.has(name), `missing /${name}`);
     assert.equal(pi.commands.get(name).description, description);
     assert.equal(typeof pi.commands.get(name).handler, 'function');
   }
+  assert.ok(pi.commands.has('agent'), 'missing /agent');
+  assert.match(pi.commands.get('agent').description, /Spawn a Forge agent/);
 });
 
 test('a command handler sends the rendered body plus the operator input', async () => {
@@ -218,4 +220,52 @@ test('a command handler notifies when the message cannot start a turn', async ()
   await research.handler('x', ctx);
   assert.equal(notified.length, 1);
   assert.match(notified[0], /could not start a turn/);
+});
+
+test('/agent spawns a Forge agent with the task tool, naming its definition', async () => {
+  const { pi } = await loadExtension();
+  const agent = pi.commands.get('agent');
+  const notified = [];
+  const ctx = { ui: { notify: (message) => notified.push(message) } };
+
+  await agent.handler('research compare RAG vs fine-tuning', ctx);
+  assert.equal(notified.length, 0);
+  assert.equal(pi.sentMessages.length, 1);
+  assert.match(pi.sentMessages[0], /task` tool/);
+  assert.match(pi.sentMessages[0], /agent: "research"/);
+  assert.match(pi.sentMessages[0], /compare RAG vs fine-tuning/);
+  assert.match(pi.sentMessages[0], /\.omp\/agents\/research\.md/);
+});
+
+test('/agent without a goal still spawns the agent', async () => {
+  const { pi } = await loadExtension();
+  const agent = pi.commands.get('agent');
+  const ctx = { ui: { notify: () => {} } };
+
+  await agent.handler('research', ctx);
+  assert.equal(pi.sentMessages.length, 1);
+  assert.match(pi.sentMessages[0], /agent: "research"/);
+});
+
+test('/agent notifies instead of spawning an unknown agent', async () => {
+  const { pi } = await loadExtension();
+  const agent = pi.commands.get('agent');
+  const notified = [];
+  const ctx = { ui: { notify: (message) => notified.push(message) } };
+
+  await agent.handler('no-such-agent do the thing', ctx);
+  assert.equal(pi.sentMessages.length, 0);
+  assert.equal(notified.length, 1);
+  assert.match(notified[0], /No Forge agent named 'no-such-agent'/);
+});
+
+test('/agent with no args notifies usage', async () => {
+  const { pi } = await loadExtension();
+  const agent = pi.commands.get('agent');
+  const notified = [];
+  const ctx = { ui: { notify: (message) => notified.push(message) } };
+
+  await agent.handler('', ctx);
+  assert.equal(pi.sentMessages.length, 0);
+  assert.match(notified[0], /Usage: \/agent <slug> <goal>/);
 });

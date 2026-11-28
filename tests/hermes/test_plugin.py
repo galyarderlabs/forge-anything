@@ -198,7 +198,7 @@ class TestSkillDescriptions:
 
 class TestCommandRegistration:
     """Every command in commands/rendered.json becomes a native hermes
-    slash command via ctx.register_command."""
+    slash command via ctx.register_command, plus /agent."""
 
     def test_register_registers_every_command(self, mock_ctx):
         plugin = _load_plugin()
@@ -208,7 +208,12 @@ class TestCommandRegistration:
             entry["name"]: entry["description"]
             for entry in __import__("json").loads(rendered.read_text())["commands"]
         }
-        assert len(mock_ctx._commands) == 29
+        expected["agent"] = (
+            "Delegate to a Forge agent as a Hermes subagent "
+            "(delegate_task with its soul + memory). "
+            "Usage: /agent <slug> <goal>"
+        )
+        assert len(mock_ctx._commands) == 30
         assert set(mock_ctx._commands) == set(expected)
         for name, (_, description) in mock_ctx._commands.items():
             assert description == expected[name], f"/{name} description drift"
@@ -254,3 +259,52 @@ class TestCommandRegistration:
         mod.register(mock_ctx)
         assert mock_ctx._commands == {}
         assert "using-forge-anything" in mock_ctx._skills
+
+
+class TestAgentCommand:
+    """One /agent command spawns any Forge agent as a Hermes subagent
+    through delegate_task, reading the soul + memory from agents/<slug>/."""
+
+    def test_agent_handler_injects_delegation_with_soul_and_memory(self, mock_ctx):
+        plugin = _load_plugin()
+        plugin.register(mock_ctx)
+        handler, _ = mock_ctx._commands["agent"]
+        result = handler(
+            args="research compare RAG vs fine-tuning", session_key="s1"
+        )
+        assert len(mock_ctx._injected) == 1
+        injected = mock_ctx._injected[0]
+        assert injected["role"] == "user"
+        assert injected["session_key"] == "s1"
+        assert "delegate_task" in injected["content"]
+        assert "agents/research/SOUL.md" in injected["content"]
+        assert "agents/research/MEMORY.md" in injected["content"]
+        assert "compare RAG vs fine-tuning" in injected["content"]
+        assert 'role="leaf"' in injected["content"]
+        assert result.startswith("Forge /agent research")
+
+    def test_agent_handler_rejects_unknown_slug_without_injecting(
+        self, mock_ctx
+    ):
+        plugin = _load_plugin()
+        plugin.register(mock_ctx)
+        handler, _ = mock_ctx._commands["agent"]
+        result = handler(args="no-such-agent do the thing", session_key="s1")
+        assert mock_ctx._injected == []
+        assert "No Forge agent named 'no-such-agent'" in result
+
+    def test_agent_handler_without_args_returns_usage(self, mock_ctx):
+        plugin = _load_plugin()
+        plugin.register(mock_ctx)
+        handler, _ = mock_ctx._commands["agent"]
+        result = handler(args="")
+        assert mock_ctx._injected == []
+        assert result.startswith("Usage: /agent <slug> <goal>")
+
+    def test_agent_handler_without_goal_returns_usage(self, mock_ctx):
+        plugin = _load_plugin()
+        plugin.register(mock_ctx)
+        handler, _ = mock_ctx._commands["agent"]
+        result = handler(args="research")
+        assert mock_ctx._injected == []
+        assert result.startswith("Usage: /agent <slug> <goal>")

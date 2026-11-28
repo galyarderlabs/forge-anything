@@ -25,23 +25,31 @@ Nothing is silently missing.
 | Feature | Claude Code | OMP / Pi | Codex | Cursor | Antigravity | OpenCode | Copilot CLI | Hermes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Skills | manifest | extension + package.json | manifest | manifest | manifest path | plugin config | spec discovery | native loader |
-| Agents | `.claude/agents/` via manifest | `.pi/agents/` files | `.codex/agents/*.toml` | `.cursor/agents/` via manifest | workspace `.agents/agents/` only | `.opencode/agents/` + config injection | `.github/agents/` project files | via commands + soul files |
+| Agents | `.claude/agents/` via manifest | `.omp/agents/` native + `.pi/agents/` files, `/agent` command | `.codex/agents/*.toml` | `.cursor/agents/` via manifest | workspace `.agents/agents/` only | `.opencode/agents/` + config injection | `.github/agents/` project files | `/agent` command via `delegate_task` |
 | Commands | `commands/*.md` | extension `registerCommand` | via MCP + skills (no slash system) | `.cursor/commands/` | `commands/*.toml` | `.opencode/commands/` | extension `joinSession` | `ctx.register_command` |
-| Hooks | `hooks/hooks.json` | extension lifecycle | not wired (needs operator login) | `hooks/hooks-cursor.json` | root `hooks.json` | message transform (per-message bootstrap) | `.github/hooks/` | `pre_llm_call` |
+| Hooks | `hooks/hooks.json` | extension lifecycle | `.codex/hooks.json` SessionStart | `hooks/hooks-cursor.json` | root `hooks.json` | message transform (per-message bootstrap) | `.github/hooks/` | `pre_llm_call` |
 | MCP | `.mcp.json` | root `mcp.json` | inline in plugin | `mcp.json` via manifest | `mcp_config.json` | `opencode.json` | root `mcp.json` (spec) | n/a, native plugin |
 | CLI | `forge` on PATH (install.sh) | same | same | same | same | same | same | same |
 
-Gaps, stated plainly: Codex hooks are not wired (no Codex credentials on
-this machine; needs the operator's login and a canary run). Antigravity
-agents ship at workspace scope only (`.agents/agents/` in scaffolded
-projects): the plugin manifest has no agents path field, and the only
-plugin-root agents dir collides with the agent folders. Pi has no
-`registerAgent` in its extension API, so Pi agents are files
-(`.pi/agents/`, plus `.claude/agents/` as a fallback for third-party
-subagent extensions); a subagent runtime needs a third-party extension.
-Hermes has no agent registration API, so its agents run through the
-commands and the soul files. Copilot plugin-scope agents are unverified
-(the SDK shape is not confirmed), so Copilot agents ship as project files.
+The rule behind the table: where a harness has no native place for
+agents, a command or hook spawns a subagent that reads the project's
+`agents/<slug>/` folder, soul plus memory, instead of pretending the
+feature does not exist. Pi core discovers `.omp/agents/` itself and
+spawns them with the built-in `task` tool, so no third-party subagent
+extension is needed; Hermes has no agent registry, so the plugin's
+`/agent` command spawns them through `delegate_task`, the native
+subagent mechanism.
+
+Gaps, stated plainly: Codex hooks ship in `.codex/hooks.json`
+(SessionStart runs `hooks/session-start codex`), but firing them live
+is still unproven: no Codex credentials on this machine, so the canary
+run needs the operator's login (or `--dangerously-bypass-hook-trust`
+for a one-off). The hook file is repo content; the login is only the
+test, not the wiring. Antigravity agents ship at workspace scope only
+(`.agents/agents/` in scaffolded projects): the plugin manifest has no
+agents path field, and the only plugin-root agents dir collides with
+the agent folders. Copilot plugin-scope agents are unverified (the SDK
+shape is not confirmed), so Copilot agents ship as project files.
 
 ## Install
 
@@ -81,8 +89,8 @@ omp plugin marketplace add galyarderlabs/forge-anything
 omp plugin install forge-anything@forge-anything-marketplace
 ```
 
-Delivers the skills, the agents (`.pi/agents/` project files), and the
-Pi/OMP extension (`.pi/extensions/forge-anything.ts`), which injects the `using-forge-anything` bootstrap at session start and registers every Forge command as a native Pi slash command. OMP also auto-inherits skills installed for Claude Code and other harnesses.
+Delivers the skills, the agents (`.omp/agents/` project files, discovered by Pi core and spawned with the `task` tool, plus `.pi/agents/` for third-party subagent extensions), and the
+Pi/OMP extension (`.pi/extensions/forge-anything.ts`), which injects the `using-forge-anything` bootstrap at session start, registers every Forge command as a native Pi slash command, and adds `/agent <slug> <goal>` to spawn any Forge agent as a subagent. OMP also auto-inherits skills installed for Claude Code and other harnesses.
 
 ### Codex
 
@@ -110,7 +118,7 @@ Or search for "forge-anything" in the plugin marketplace. Delivers the skills, t
 agy plugin install https://github.com/galyarderlabs/forge-anything
 ```
 
-Delivers the skills, the commands (`commands/*.toml`), and the MCP server. Agents ship at workspace scope only (`.agents/agents/` in scaffolded projects): the Antigravity plugin manifest has no agents path field, and the only plugin-root agents dir collides with the agent folders, so there is no plugin-scope agent form.
+Delivers the skills, the agents (`.codex/agents/*.toml`), the MCP server, and the SessionStart hook (`.codex/hooks.json` runs `hooks/session-start codex` at session start). Commands reach Codex through the MCP (`read_command`) and the skills, since Codex has no slash-command system.
 
 ### OpenCode
 
@@ -141,7 +149,7 @@ Install Forge Anything as a Hermes plugin from this repository:
 hermes plugins install galyarderlabs/forge-anything --enable
 ```
 
-Restart any active Hermes sessions after installing. The plugin registers the skills with Hermes' native skill loader, registers every Forge command as a native Hermes slash command, and injects the `using-forge-anything` bootstrap on the first turn via the `pre_llm_call` hook. Hermes has no agent registration API, so the agents run through the commands and the soul files, not as registered agents. Note: Hermes has no post-compaction hook, so a very long session that compacts over its first turn loses the bootstrap - start a fresh session if skills stop triggering.
+Restart any active Hermes sessions after installing. The plugin registers the skills with Hermes' native skill loader, registers every Forge command as a native Hermes slash command, and injects the `using-forge-anything` bootstrap on the first turn via the `pre_llm_call` hook. Agents run through the `/agent` command: `/agent <slug> <goal>` spawns that Forge agent as a native subagent via `delegate_task`, reading its soul and memory from `agents/<slug>/`. Note: Hermes has no post-compaction hook, so a very long session that compacts over its first turn loses the bootstrap - start a fresh session if skills stop triggering.
 
 ## Skills only (no harness plugin)
 
@@ -183,12 +191,12 @@ The renders rewrite one line: the trailing `**Note**` that names a `forge-anythi
 Agents start from one source, `agents/<slug>/SOUL.md`, and `scripts/sync-agents.py` renders every harness's native form from it (`--check` in CI keeps the renders in sync). The body of every render is the soul verbatim: the soul is the system prompt. The description is the soul's identity line, the last paragraph of `## Vision`, which always carries a `Use when` trigger; a soul without it fails the render instead of shipping a description that does not say when to delegate. The skills roster comes from the trailing `Skills:` line; the six coordinators with no skills get no skills field in the Claude render.
 
 - **Claude Code:** `.claude/agents/<slug>.md`, frontmatter name/description/skills. The manifest lists all 54 explicitly under the `agents` key, which replaces the `agents/` scan.
-- **Pi / OMP:** `.pi/agents/<slug>.md` project files. Pi's extension API has no `registerAgent`, so files are the form; `.claude/agents/` is also read by third-party subagent extensions as a fallback. A subagent runtime needs a third-party extension.
+- **Pi / OMP:** `.omp/agents/<slug>.md` project files, discovered by Pi core itself and spawned with the built-in `task` tool by name. The extension adds a `/agent <slug> <goal>` command that does the spawn in one command. `.pi/agents/<slug>.md` holds the same definitions in the form third-party subagent extensions read; `.claude/agents/` is also read by them as a fallback.
 - **OpenCode:** `.opencode/agents/<slug>.md`, frontmatter description plus `mode: subagent`. The plugin also injects them at runtime as `config.agents`, so they are native subagents without reading files.
 - **Cursor:** `.cursor/agents/<slug>.md` project subagents, wired through `.cursor-plugin/plugin.json` (explicit paths replace folder discovery).
 - **Antigravity:** `.agents/agents/<slug>.md` workspace agents, seeded by the scaffold. The plugin manifest has no agents path field, and the only plugin-root agents dir collides with the agent folders, so there is no plugin-scope agent form.
 - **Copilot CLI:** `.github/agents/<slug>.agent.md` project agents. Plugin-scope agents through the extension SDK are unverified, so they are not shipped.
-- **Hermes:** no render. Hermes has no agent registration API, so its agents run through the commands and the soul files.
+- **Hermes:** no render. Hermes has no agent registry, so the plugin's `/agent <slug> <goal>` command spawns the agent as a native subagent through `delegate_task`, reading its soul and memory from `agents/<slug>/`.
 - **Codex:** `.codex/agents/<slug>.toml`, with the soul as `developer_instructions`.
 
 ## MCP server
@@ -215,9 +223,12 @@ Silo/
 ├── .cursor/agents/     # Cursor project subagents
 ├── .opencode/agents/   # OpenCode agents (mode: subagent)
 ├── .codex/agents/      # Codex agents (*.toml)
-├── .pi/agents/         # Pi / OMP project agents
+├── .pi/agents/         # Pi / OMP project agents (third-party subagent extensions)
+├── .omp/agents/         # Pi / OMP core project agents (task tool)
 ├── .github/agents/     # Copilot CLI project agents
 ├── .agents/agents/     # Antigravity workspace agents
+├── .codex/hooks.json    # Codex SessionStart hook
+├── hooks/session-start  # SessionStart script (Claude, Codex, Antigravity)
 ├── .opencode/commands/ # OpenCode command files
 ├── .cursor/commands/   # Cursor command files
 ├── .github/extensions/ # Copilot CLI slash-command extension

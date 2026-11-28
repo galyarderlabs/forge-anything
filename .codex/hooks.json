@@ -1,0 +1,1 @@
+{"description":"Forge Anything lifecycle hooks for Codex (project scope, trusted project layer).","hooks":{"SessionStart":[{"hooks":[{"command":"bash hooks/session-start codex","statusMessage":"Loading Forge Anything","timeout":30,"type":"command"}],"matcher":"startup|resume|clear|compact"}]}}

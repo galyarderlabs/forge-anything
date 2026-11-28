@@ -9,11 +9,14 @@
 //! - `.opencode/commands/` and `.cursor/commands/` - the same commands in
 //!   each harness's native file form
 //! - `.claude/agents/`, `.cursor/agents/`, `.opencode/agents/`,
-//!   `.codex/agents/`, `.pi/agents/`, `.github/agents/`, `.agents/agents/`
+//!   `.codex/agents/`, `.pi/agents/`, `.omp/agents/`, `.github/agents/`,
+//!   `.agents/agents/`
 //!   - the curated agents in each harness's native form
 //! - `.mcp.json`, `mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`,
 //!   `.opencode/opencode.json` - the project MCP configs, so the `forge`
 //!   MCP server works in every harness that reads project config
+//! - `.codex/hooks.json` and `hooks/session-start` - the Codex SessionStart
+//!   hook, so a Codex session in the new project loads the Forge bootstrap
 //! - `.github/extensions/forge-anything/extension.mjs` - the Copilot CLI
 //!   slash-command extension
 //! - `docs/` - specs, plans, reports, templates, design, and the 17
@@ -224,6 +227,11 @@ pub fn scaffold(
                 format!("{agent}.md"),
             ),
             (
+                source.join(".omp").join("agents"),
+                target.join(".omp").join("agents"),
+                format!("{agent}.md"),
+            ),
+            (
                 source.join(".github").join("agents"),
                 target.join(".github").join("agents"),
                 format!("{agent}.agent.md"),
@@ -261,6 +269,26 @@ pub fn scaffold(
         (
             source.join(".opencode").join("opencode.json"),
             target.join(".opencode").join("opencode.json"),
+        ),
+    ] {
+        if src_file.is_file() {
+            copy_file(src_file, dst_file, &mut s)?;
+        }
+    }
+
+    // --- Codex SessionStart hook ------------------------------------------
+    // The hook needs its script next to it: .codex/hooks.json calls
+    // `bash hooks/session-start codex`, so both land together. A source
+    // without them still scaffolds; CI's smoke run is what proves the hook
+    // file exists in the Forge Anything repo.
+    for (src_file, dst_file) in [
+        (
+            source.join(".codex").join("hooks.json"),
+            target.join(".codex").join("hooks.json"),
+        ),
+        (
+            source.join("hooks").join("session-start"),
+            target.join("hooks").join("session-start"),
         ),
     ] {
         if src_file.is_file() {
@@ -336,13 +364,16 @@ fn readme(project_name: &str) -> String {
          `commands/rendered.json` (Pi, Hermes, Copilot CLI at runtime).\n\
          - `agents/` in every harness's native form too: `.claude/agents/`,\n\
          `.cursor/agents/`, `.opencode/agents/`, `.codex/agents/`,\n\
-         `.pi/agents/`, `.github/agents/`, `.agents/agents/` (Antigravity\n\
-         workspace scope), so any harness can delegate to the agents\n\
-         directly instead of only through commands.\n\
+         `.pi/agents/`, `.omp/agents/`, `.github/agents/`,\n\
+         `.agents/agents/` (Antigravity workspace scope), so any harness\n\
+         can delegate to the agents directly instead of only through\n\
+         commands.\n\
          - `.mcp.json`, `mcp.json`, `.cursor/mcp.json`,\n\
          `.codex/config.toml`, `.opencode/opencode.json` - the `forge` MCP\n\
          server in each harness's project config form. These call bare\n\
          `forge`, so run the Forge Anything `install.sh` first.\n\
+         - `.codex/hooks.json` and `hooks/session-start` - the Codex\n\
+         SessionStart hook, so a Codex session loads the Forge bootstrap.\n\
          - `docs/` - specs, plans, reports, templates, design, and\n\
          `docs/departments/` (one folder per department, with its audit\n\
          template).\n\

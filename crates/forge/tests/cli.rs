@@ -479,6 +479,7 @@ fn scaffold_through_cli_produces_a_ready_repo() {
     assert_eq!(count_ext(&target.join(".opencode/agents"), "md"), 17);
     assert_eq!(count_ext(&target.join(".codex/agents"), "toml"), 17);
     assert_eq!(count_ext(&target.join(".pi/agents"), "md"), 17);
+    assert_eq!(count_ext(&target.join(".omp/agents"), "md"), 17);
     assert_eq!(
         fs::read_dir(target.join(".github/agents")).unwrap().count(),
         17
@@ -490,6 +491,9 @@ fn scaffold_through_cli_produces_a_ready_repo() {
     assert!(target.join(".cursor/mcp.json").is_file());
     assert!(target.join(".codex/config.toml").is_file());
     assert!(target.join(".opencode/opencode.json").is_file());
+    // Codex SessionStart hook: the hook file plus the script it calls.
+    assert!(target.join(".codex/hooks.json").is_file());
+    assert!(target.join("hooks/session-start").is_file());
     // No plugin manifests in the scaffolded repo (commands and agents ship
     // per harness; the manifests stay in the Forge Anything repo). The
     // project MCP configs above are not plugin manifests.

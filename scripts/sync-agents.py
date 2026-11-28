@@ -15,8 +15,11 @@ own native agent form from that one source:
   .opencode/agents/<slug>.md    OpenCode (mode: subagent; the plugin also
                                  injects them as config.agents at runtime)
   .codex/agents/<slug>.toml     Codex (name/description/developer_instructions)
-  .pi/agents/<slug>.md          Pi / OMP (project agents; Pi's extension API
-                                 has no registerAgent, so files are the form)
+  .pi/agents/<slug>.md          Pi / OMP (third-party subagent-extension
+                                 path; the model reads the soul from here)
+  .omp/agents/<slug>.md         Pi / OMP core (native project agents: Pi
+                                 discovers them itself and spawns them with
+                                 the built-in `task` tool by name)
   .github/agents/<slug>.agent.md Copilot CLI (project agents)
   .agents/agents/<slug>.md      Antigravity (workspace agents; the plugin
                                  manifest has no agents path field, and the
@@ -44,9 +47,10 @@ at the same server (the `forge` CLI, stdio, local only):
 --check also verifies the MCP entries already declared elsewhere
 (.codex-plugin/plugin.json, .antigravity-plugin/mcp_config.json,
 .opencode/opencode.json) name the same server. Hermes has no agent
-registration API (register_tool / register_hook / register_command only),
-so Hermes agents stay the commands plus the soul files; nothing is rendered
-for it and that is documented in docs/INTEGRATION.md, not hidden.
+registration API, so Hermes agents are not rendered as files: the
+Forge plugin's /agent command spawns them as native subagents through
+`delegate_task`, reading the soul + memory from agents/<slug>/.
+That is documented in docs/INTEGRATION.md, not hidden.
 """
 
 import json
@@ -63,6 +67,7 @@ CURSOR_DIR = REPO_ROOT / ".cursor" / "agents"
 OPENCODE_DIR = REPO_ROOT / ".opencode" / "agents"
 CODEX_DIR = REPO_ROOT / ".codex" / "agents"
 PI_DIR = REPO_ROOT / ".pi" / "agents"
+OMP_DIR = REPO_ROOT / ".omp" / "agents"
 COPILOT_DIR = REPO_ROOT / ".github" / "agents"
 ANTIGRAVITY_WS_DIR = REPO_ROOT / ".agents" / "agents"
 
@@ -165,6 +170,10 @@ def render_pi(agent: dict) -> str:
     return render_cursor(agent)
 
 
+def render_omp(agent: dict) -> str:
+    return render_cursor(agent)
+
+
 def render_copilot(agent: dict) -> str:
     return render_cursor(agent)
 
@@ -250,6 +259,7 @@ def build_outputs(agents: list[dict]) -> dict[Path, str]:
         outputs[OPENCODE_DIR / f"{slug}.md"] = render_opencode(agent)
         outputs[CODEX_DIR / f"{slug}.toml"] = render_codex(agent)
         outputs[PI_DIR / f"{slug}.md"] = render_pi(agent)
+        outputs[OMP_DIR / f"{slug}.md"] = render_omp(agent)
         outputs[COPILOT_DIR / f"{slug}.agent.md"] = render_copilot(agent)
         outputs[ANTIGRAVITY_WS_DIR / f"{slug}.md"] = render_antigravity_ws(agent)
     outputs[REPO_ROOT / ".mcp.json"] = render_mcp_claude()
@@ -301,6 +311,7 @@ def check_stale(wanted: set[Path]) -> list[str]:
         (OPENCODE_DIR, "*.md"),
         (CODEX_DIR, "*.toml"),
         (PI_DIR, "*.md"),
+        (OMP_DIR, "*.md"),
         (COPILOT_DIR, "*.agent.md"),
         (ANTIGRAVITY_WS_DIR, "*.md"),
     ]:
@@ -371,8 +382,8 @@ def main() -> None:
     print(
         f"agents: rendered {len(agents)} agents to {len(outputs)} files "
         f"(.claude/agents, .cursor/agents, .opencode/agents, .codex/agents, "
-        f".pi/agents, .github/agents, .agents/agents, plus MCP configs and "
-        f"the Cursor manifest)"
+        f".pi/agents, .omp/agents, .github/agents, .agents/agents, plus "
+        f"MCP configs and the Cursor manifest)"
     )
 
 

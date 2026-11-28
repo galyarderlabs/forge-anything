@@ -1,5 +1,5 @@
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
@@ -38,6 +38,12 @@ export default function forgeAnythingPiExtension(pi: ExtensionAPI) {
 	// commands/*.md); the handler sends the body plus the operator's input as
 	// a user message, which starts the turn.
 	registerCommands(pi);
+
+	// One command that spawns any Forge agent as a Pi subagent: the agent
+	// definition is read from the project's own .omp/agents/ folder (Pi core
+	// discovers it and the built-in `task` tool spawns it by name), so no
+	// third-party subagent extension is needed.
+	registerAgentCommand(pi);
 
 	// Messages returned from a context handler are sent to the provider but never
 	// written to session history, so the bootstrap has to be injected into every
@@ -100,6 +106,51 @@ function registerCommands(pi: ExtensionAPI): void {
 	}
 }
 
+function findAgentDefinition(slug: string): string | null {
+	// Project scope first, then the plugin's own copy (a project that
+	// installed the plugin but never scaffolded still gets its agents).
+	const candidates = [
+		join(process.cwd(), ".omp", "agents", `${slug}.md`),
+		join(packageRoot, ".omp", "agents", `${slug}.md`),
+	];
+	for (const candidate of candidates) {
+		if (existsSync(candidate)) return candidate;
+	}
+	return null;
+}
+
+function registerAgentCommand(pi: ExtensionAPI): void {
+	pi.registerCommand("agent", {
+		description:
+			"Spawn a Forge agent as a Pi subagent (task tool, definition from .omp/agents/). Usage: /agent <slug> <goal>",
+		handler: async (args: string, ctx) => {
+			const input = args.trim();
+			if (!input) {
+				ctx.ui.notify("Usage: /agent <slug> <goal>", "error");
+				return;
+			}
+			const [slug, ...goalParts] = input.split(/\s+/);
+			const goal = goalParts.join(" ").trim();
+			const definition = findAgentDefinition(slug);
+			if (!definition) {
+				ctx.ui.notify(
+					`No Forge agent named '${slug}'. Agent definitions live in .omp/agents/`,
+					"error",
+				);
+				return;
+			}
+			const prompt = goal
+				? `Spawn the Forge ${slug} agent with the \`task\` tool (agent: "${slug}") for this goal:\n\n${goal}\n\nThe agent definition is ${definition}. Report the subagent's result back when it finishes.`
+				: `Spawn the Forge ${slug} agent with the \`task\` tool (agent: "${slug}"). The agent definition is ${definition}. Report the subagent's result back when it finishes.`;
+			try {
+				await pi.sendUserMessage(prompt);
+			} catch {
+				ctx.ui.notify("Forge /agent could not start a turn", "error");
+			}
+		},
+	});
+}
+
 function getBootstrapContent(): string | null {
 	if (cachedBootstrap !== undefined) return cachedBootstrap;
 
@@ -136,7 +187,7 @@ Pi has native skills but does not expose Claude Code's \`Skill\` tool. When a Fo
 
 Pi's built-in coding tools are lowercase: \`read\`, \`write\`, \`edit\`, \`bash\`, plus optional \`grep\`, \`find\`, and \`ls\`. Use those for the corresponding actions: read a file, create or edit files, run shell commands, search file contents, find files by name, and list directories.
 
-Pi does not ship a standard subagent tool. If a subagent tool such as \`subagent\` from \`pi-subagents\` is available, use it for Forge Anything subagent workflows. If no subagent tool is available, do the work in this session or explain the missing capability instead of inventing \`Task\` calls.
+Pi's built-in \`task\` tool spawns subagents by agent name. Forge agent definitions live in \`.omp/agents/\` (project scope, discovered by Pi core itself) and \`~/.omp/agent/agents/\` (user scope). Use \`/agent <slug>\` to spawn one in a single command, or call the \`task\` tool directly with \`agent: "<slug>"\` and the goal as the brief. \`.pi/agents/\` holds the same definitions in the form third-party subagent extensions read; prefer \`.omp/agents/\` and the \`task\` tool.
 
 Pi does not ship a standard task-list tool. If an installed todo/task tool is available, use it. Otherwise track work in plan files or a repo-local \`TODO.md\` when task tracking is needed. Treat older \`TodoWrite\` references as this task-tracking action.`;
 }

@@ -83,6 +83,7 @@ jobs:
           test "$(ls "$OUT/.opencode/agents"/*.md | wc -l)" -eq 17
           test "$(ls "$OUT/.codex/agents"/*.toml | wc -l)" -eq 17
           test "$(ls "$OUT/.pi/agents"/*.md | wc -l)" -eq 17
+          test "$(ls "$OUT/.omp/agents"/*.md | wc -l)" -eq 17
           test "$(ls "$OUT/.github/agents"/*.agent.md | wc -l)" -eq 17
           test "$(ls "$OUT/.agents/agents"/*.md | wc -l)" -eq 17
           # Project MCP configs for every harness that reads them.
@@ -91,6 +92,9 @@ jobs:
           test -f "$OUT/.cursor/mcp.json"
           test -f "$OUT/.codex/config.toml"
           test -f "$OUT/.opencode/opencode.json"
+          # Codex SessionStart hook: the hook file plus the script it calls.
+          test -f "$OUT/.codex/hooks.json"
+          test -f "$OUT/hooks/session-start"
           test -f "$OUT/README.md"
           test -f "$OUT/AGENTS.md"
           test -f "$OUT/WORKFLOW.md"
@@ -155,6 +159,7 @@ jobs:
           test "$(ls /tmp/forge-cli-proof/.opencode/agents/*.md | wc -l)" -eq 17
           test "$(ls /tmp/forge-cli-proof/.codex/agents/*.toml | wc -l)" -eq 17
           test "$(ls /tmp/forge-cli-proof/.pi/agents/*.md | wc -l)" -eq 17
+          test "$(ls /tmp/forge-cli-proof/.omp/agents/*.md | wc -l)" -eq 17
           test "$(ls /tmp/forge-cli-proof/.github/agents/*.agent.md | wc -l)" -eq 17
           test "$(ls /tmp/forge-cli-proof/.agents/agents/*.md | wc -l)" -eq 17
           # Project MCP configs for every harness that reads them.
@@ -163,6 +168,9 @@ jobs:
           test -f /tmp/forge-cli-proof/.cursor/mcp.json
           test -f /tmp/forge-cli-proof/.codex/config.toml
           test -f /tmp/forge-cli-proof/.opencode/opencode.json
+          # Codex SessionStart hook: the hook file plus the script it calls.
+          test -f /tmp/forge-cli-proof/.codex/hooks.json
+          test -f /tmp/forge-cli-proof/hooks/session-start
           test -f /tmp/forge-cli-proof/README.md
           echo "forge scaffold: OK"
 

@@ -109,6 +109,25 @@ def _commands_file() -> str | None:
     return None
 
 
+def _agents_dir() -> str | None:
+    """Locate agents/ for either supported install layout.
+
+    Same two layouts as _skills_dir: the plugin dir is the repo root in a
+    git-clone install, or the plugin files sit flattened in the plugin dir
+    root. Returns None when the tree is absent (an older checkout): /agent
+    is additive, so the plugin keeps working without it.
+    """
+    here = os.path.dirname(os.path.realpath(__file__))
+    candidates = (
+        os.path.realpath(os.path.join(here, "..", "agents")),
+        os.path.realpath(os.path.join(here, "agents")),
+    )
+    for cand in candidates:
+        if os.path.isfile(os.path.join(cand, "forge-ceo", "SOUL.md")):
+            return cand
+    return None
+
+
 def register(ctx):
     skills_dir = _skills_dir()
     bootstrap = _build_bootstrap(skills_dir)
@@ -152,6 +171,54 @@ def register(ctx):
                 return handle
 
             ctx.register_command(name, make_handler(), command["description"])
+
+    # One command that spawns any Forge agent as a Hermes subagent. Hermes
+    # has no register_agent API, and none is needed: subagents are spawned
+    # by the session's own delegate_task tool, so the handler injects a
+    # delegation instruction and the model does the spawn, reading the
+    # agent's soul + memory from the project agents/ folder.
+    agents_dir = _agents_dir()
+    if agents_dir is not None:
+
+        def handle_agent(args, session_key=None, **kwargs):
+            parts = (args or "").strip().split(None, 1)
+            if not parts:
+                return (
+                    "Usage: /agent <slug> <goal> — delegate to a Forge "
+                    "agent as a subagent."
+                )
+            slug = parts[0]
+            goal = parts[1].strip() if len(parts) > 1 else ""
+            if not goal:
+                return (
+                    "Usage: /agent <slug> <goal> — delegate to a Forge "
+                    "agent as a subagent."
+                )
+            soul = os.path.join(agents_dir, slug, "SOUL.md")
+            memory = os.path.join(agents_dir, slug, "MEMORY.md")
+            if not os.path.isfile(soul):
+                return f"No Forge agent named '{slug}'. Agents live in agents/."
+            text = (
+                f"Delegate to the {slug} Forge agent with delegate_task. "
+                f"First read {soul} and {memory}: the soul is the "
+                f"subagent's instructions and system prompt, the memory is "
+                f"its prior decisions. Then call delegate_task with goal "
+                f"'{goal}' and the soul plus the memory as the context, "
+                f'role="leaf". Report the subagent\'s result back when it '
+                f"finishes."
+            )
+            ok = ctx.inject_message(text, role="user", session_key=session_key)
+            if ok:
+                return f"Forge /agent {slug} sent to the agent."
+            return "Forge /agent could not be injected into this session."
+
+        ctx.register_command(
+            "agent",
+            handle_agent,
+            "Delegate to a Forge agent as a Hermes subagent "
+            "(delegate_task with its soul + memory). "
+            "Usage: /agent <slug> <goal>",
+        )
 
     # pre_llm_call returning {"context": ...} is the documented injection path
     # (on_session_start return values are ignored, and ctx.inject_message
